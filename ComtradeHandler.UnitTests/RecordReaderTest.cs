@@ -1,51 +1,51 @@
-﻿
-using System;
+﻿using System;
+using ComtradeHandler.Core;
 using NUnit.Framework;
 
-namespace Wisp.Comtrade
+namespace ComtradeHandler.UnitTests
 {
-	[TestFixture]
+    [TestFixture]
     public class RecordReaderTest
-	{
-		/// <summary>
-		/// Success only on maintainer machine 
-		/// </summary>
-		[Test]		
-		public void TestOpenFile()
-		{	
-			RecordReader record;
-			record=new RecordReader(@"Resources\sample_ascii.dat");
-			record.GetTimeLine();
-			record.GetAnalogPrimaryChannel(0);
-			record.GetDigitalChannel(0);
-			
-			record=new RecordReader(@"Resources\sample_bin.DAT");
-			record.GetTimeLine();
-			record.GetAnalogPrimaryChannel(0);
-			record.GetDigitalChannel(0);
-			
-			record=new RecordReader(@"Resources\sample_ascii.cFg");
-			record.GetTimeLine();
-			record.GetAnalogPrimaryChannel(0);
-			record.GetDigitalChannel(0);
-			
-			record=new RecordReader(@"Resources\sample_bin.cfg");	
-			
-			//record=new RecordReader(@"D:\YandexDisk\Oscillogram\Sepam_StopingGenerator_B\1.DAT");
-			//record.GetTimeLine();
-			//record.GetAnalogPrimaryChannel(0);
-			//record.GetDigitalChannel(0);	
+    {
+        [Test]
+        public void TestNotSupportedExtentions()
+        {
+            Assert.Throws<InvalidOperationException>(() => new RecordReader("notComtradeExtentions.trr"));
+        }
 
-			//record=new RecordReader(@"D:\YandexDisk\Oscillogram\Undefined_2013_B32\000.DAT");
-			//record.GetTimeLine();
-			//record.GetAnalogPrimaryChannel(0);
-			//record.GetDigitalChannel(0);			
-		}
-		
-		[Test]
-		public void TestNotSupportedExtentions()
-		{					
-			Assert.Throws<InvalidOperationException> (() => new RecordReader("notComtradeExtentions.trr"));
-		}
-	}
+        /// <summary>
+        /// Success only on maintainer machine 
+        /// </summary>
+        [Test]
+        public void TestOpenFile()
+        {
+            RecordReader record;
+            record = new RecordReader(@"Resources\sample_ascii.dat");
+            record.GetTimeLine();
+            record.GetAnalogPrimaryChannel(0);
+            record.GetDigitalChannel(0);
+
+            record = new RecordReader(@"Resources\sample_bin.DAT");
+            record.GetTimeLine();
+            record.GetAnalogPrimaryChannel(0);
+            record.GetDigitalChannel(0);
+
+            record = new RecordReader(@"Resources\sample_ascii.cFg");
+            record.GetTimeLine();
+            record.GetAnalogPrimaryChannel(0);
+            record.GetDigitalChannel(0);
+
+            record = new RecordReader(@"Resources\sample_bin.cfg");
+
+            //record=new RecordReader(@"D:\YandexDisk\Oscillogram\Sepam_StopingGenerator_B\1.DAT");
+            //record.GetTimeLine();
+            //record.GetAnalogPrimaryChannel(0);
+            //record.GetDigitalChannel(0);	
+
+            //record=new RecordReader(@"D:\YandexDisk\Oscillogram\Undefined_2013_B32\000.DAT");
+            //record.GetTimeLine();
+            //record.GetAnalogPrimaryChannel(0);
+            //record.GetDigitalChannel(0);			
+        }
+    }
 }

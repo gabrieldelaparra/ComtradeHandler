@@ -1,13 +1,7 @@
-﻿/*
- * Created by SharpDevelop.
- * User: borisov
- * Date: 24.05.2017
- * Time: 9:02
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Wisp.Comtrade
+namespace ComtradeHandler.Core
 {
 	/// <summary>
 	/// 

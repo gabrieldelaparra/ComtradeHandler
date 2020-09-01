@@ -1,15 +1,6 @@
-﻿/*
- * Created by SharpDevelop.
- * User: borisov
- * Date: 24.05.2017
- * Time: 8:58
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-using System;
-using System.Linq;
+﻿using System.Linq;
 
-namespace Wisp.Comtrade
+namespace ComtradeHandler.Core
 {
 	/// <summary>
 	/// Description of DataFileHandler.

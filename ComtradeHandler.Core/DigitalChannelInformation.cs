@@ -1,14 +1,7 @@
-﻿/*
- * Created by SharpDevelop.
- * User: borisov
- * Date: 23.05.2017
- * Time: 15:14
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
+﻿
 using System;
 
-namespace Wisp.Comtrade
+namespace ComtradeHandler.Core
 {
 	/// <summary>
 	/// Information for digital channel

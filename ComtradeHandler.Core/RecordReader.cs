@@ -1,15 +1,7 @@
-﻿/*
- * Created by SharpDevelop.
- * User: borisov
- * Date: 24.05.2017
- * Time: 16:00
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Wisp.Comtrade
+namespace ComtradeHandler.Core
 {
 	/// <summary>
 	/// Class for parsing comtrade files
