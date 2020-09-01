@@ -11,12 +11,12 @@ namespace ComtradeHandler.Core
     public class RecordWriter
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string StationName { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string DeviceId { get; }
 
@@ -63,7 +63,7 @@ namespace ComtradeHandler.Core
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public void AddAnalogChannel(AnalogChannelInformation analogChannel)
         {
@@ -72,7 +72,7 @@ namespace ComtradeHandler.Core
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public void AddDigitalChannel(DigitalChannelInformation digitalChannel)
         {
@@ -81,7 +81,7 @@ namespace ComtradeHandler.Core
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="timestamp">micro second</param>
         /// <param name="analogs"></param>
@@ -101,16 +101,12 @@ namespace ComtradeHandler.Core
 
             if (this.analogChannelInformationList.Count != notNullAnalogs.Length)
             {
-                throw new InvalidOperationException(string.Format("Analogs count ({0}) must be equal to channels count ({1})",
-                                                                  notNullAnalogs.Length,
-                                                                  this.analogChannelInformationList.Count));
+                throw new InvalidOperationException($"Analog count ({notNullAnalogs.Length}) must be equal to channels count ({analogChannelInformationList.Count})");
             }
 
             if (this.digitalChannelInformationList.Count != notNullDigitals.Length)
             {
-                throw new InvalidOperationException(string.Format("Digitals count ({0}) must be equal to channels count ({1})",
-                                                                  notNullDigitals.Length,
-                                                                  this.digitalChannelInformationList.Count));
+                throw new InvalidOperationException($"Digital count ({notNullDigitals.Length}) must be equal to channels count ({digitalChannelInformationList.Count})");
             }
 
             this.sampleList.Add(new DataFileSample(this.sampleList.Count + 1, timestamp, notNullAnalogs, notNullDigitals));
@@ -130,7 +126,7 @@ namespace ComtradeHandler.Core
 
 
             string path = System.IO.Path.GetDirectoryName(fullPathToFile);
-            string filenameWithoutExtention = System.IO.Path.GetFileNameWithoutExtension(fullPathToFile);
+            string fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(fullPathToFile);
 
             this.CalculateScaleFactorAB(dataFileType);
 
@@ -191,10 +187,10 @@ namespace ComtradeHandler.Core
 
             strings.Add("1.0");
 
-            System.IO.File.WriteAllLines(System.IO.Path.Combine(path, filenameWithoutExtention) + GlobalSettings.ExtensionCFG, strings);
+            System.IO.File.WriteAllLines(System.IO.Path.Combine(path, fileNameWithoutExtension) + GlobalSettings.ExtensionCFG, strings);
 
             //DAT part
-            string dataFileFullPath = System.IO.Path.Combine(path, filenameWithoutExtention) + GlobalSettings.ExtensionDAT;
+            string dataFileFullPath = System.IO.Path.Combine(path, fileNameWithoutExtension) + GlobalSettings.ExtensionDAT;
 
             if (dataFileType == DataFileType.ASCII)
             {
@@ -220,7 +216,7 @@ namespace ComtradeHandler.Core
         {
             if (dataFileType == DataFileType.Binary ||
                dataFileType == DataFileType.Binary32)
-            {//i make it same, but in theory, bin32 can be more precise			
+            {//i make it same, but in theory, bin32 can be more precise
                 for (int i = 0; i < this.analogChannelInformationList.Count; i++)
                 {
                     double min = this.sampleList.Min(x => x.AnalogValues[i]);
@@ -228,10 +224,10 @@ namespace ComtradeHandler.Core
                     this.analogChannelInformationList[i].MultiplierB = (max + min) / 2.0;
                     if (max != min)
                     {
-                        this.analogChannelInformationList[i].MultiplierA = (max - min) / 32767.0;//65536						
+                        this.analogChannelInformationList[i].MultiplierA = (max - min) / 32767.0;//65536
                     }
                     this.analogChannelInformationList[i].Min = -32767;//by standart 1999
-                    this.analogChannelInformationList[i].Max = 32767;//by standart 1999					
+                    this.analogChannelInformationList[i].Max = 32767;//by standart 1999
                 }
             }
             else if (dataFileType == DataFileType.ASCII)

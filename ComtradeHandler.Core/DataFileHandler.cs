@@ -58,7 +58,8 @@ namespace ComtradeHandler.Core
             else if (configuration.DataFileType == DataFileType.ASCII)
             {
                 var strings = System.IO.File.ReadAllLines(fullPathToFileDAT);
-                strings = strings.Where(x => x != string.Empty).ToArray();//removing empty strings (when *.dat file not following Standart)
+                //removing empty strings (when *.dat file not following Standard)
+                strings = strings.Where(x => x != string.Empty).ToArray();
                 for (int i = 0; i < samplesCount; i++)
                 {
                     this.Samples[i] = new DataFileSample(strings[i],

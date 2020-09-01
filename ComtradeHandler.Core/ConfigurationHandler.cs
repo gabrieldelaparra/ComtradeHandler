@@ -42,7 +42,7 @@ namespace ComtradeHandler.Core
         /// </summary>
         public double Frequency { get; set; } = 50.0;
 
-        public int SamplingRateCount { get; set; } 
+        public int SamplingRateCount { get; set; }
         public List<SampleRate> SampleRates;
 
         /// <summary>
@@ -59,7 +59,8 @@ namespace ComtradeHandler.Core
 
         internal double TimeMultiplicationFactor = 1.0;
 
-        public ConfigurationHandler()//для тестов
+        //For testing
+        public ConfigurationHandler()
         {
 
         }
@@ -134,7 +135,7 @@ namespace ComtradeHandler.Core
         {
             secondLine = secondLine.Replace(GlobalSettings.WhiteSpace.ToString(), string.Empty);
             var values = secondLine.Split(GlobalSettings.Comma);
-            //values[0];//не используется, равен сумме двух последующих
+            //values[0];// not used, equal to the sum of the next two
             this.AnalogChannelsCount = Convert.ToInt32(values[1].TrimEnd('A'), System.Globalization.CultureInfo.InvariantCulture);
             this.DigitalChannelsCount = Convert.ToInt32(values[2].TrimEnd('D'), System.Globalization.CultureInfo.InvariantCulture);
         }
@@ -151,11 +152,10 @@ namespace ComtradeHandler.Core
 
         internal static DateTime ParseDateTime(string str)
         {   // "dd/mm/yyyy,hh:mm:ss.ssssss"
-            DateTime result;
             DateTime.TryParseExact(str, GlobalSettings.DateTimeFormat,
                                    System.Globalization.CultureInfo.InvariantCulture,
                                    System.Globalization.DateTimeStyles.AllowWhiteSpaces,
-                                   out result);
+                                   out var result);
             return result;
         }
 

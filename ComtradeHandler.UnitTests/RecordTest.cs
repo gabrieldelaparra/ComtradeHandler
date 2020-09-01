@@ -10,13 +10,13 @@ namespace ComtradeHandler.UnitTests
     public class RecordTest
     {
         [Test]
-        public void TestNotSupportedExtentions()
+        public void TestNotSupportedExtensions()
         {
-            Assert.Throws<InvalidOperationException>(() => new RecordReader("notComtradeExtentions.trr"));
+            Assert.Throws<InvalidOperationException>(() => new RecordReader("notComtradeExtensions.trr"));
         }
 
         /// <summary>
-        /// Success only on maintainer machine 
+        /// Success only on maintainer machine
         /// </summary>
         [Test]
         public void TestOpenFile()

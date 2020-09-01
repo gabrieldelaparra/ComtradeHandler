@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace ComtradeHandler.Core
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class DataFileSample
     {
@@ -12,7 +12,7 @@ namespace ComtradeHandler.Core
 
         /// <summary>
         /// microsecond or nanosecond defined by CFG (according STD)
-        /// Note: i dont know, where in CFG it is defined, suppose always be microsecond
+        /// Note: I do not know, where in CFG it is defined, suppose always be microsecond
         /// </summary>
         public int Timestamp { get; }
 
@@ -41,7 +41,7 @@ namespace ComtradeHandler.Core
             for (int i = 0; i < analogCount; i++)
             {
                 if (strings[i + 2] != string.Empty)
-                {//by Standart, can be missing value. In that case by default=0
+                {//by Standard, can be missing value. In that case by default=0
                     this.AnalogValues[i] = Convert.ToDouble(strings[i + 2], System.Globalization.CultureInfo.InvariantCulture);
                 }
             }
@@ -74,14 +74,14 @@ namespace ComtradeHandler.Core
                 if (dataFileType == DataFileType.Binary32)
                 {
                     for (int i = 0; i < analogCount; i++)
-                    {//TODO добавить тест				
+                    {//TODO add test
                         this.AnalogValues[i] = System.BitConverter.ToInt32(bytes, 8 + i * 4);
                     }
                 }
                 else if (dataFileType == DataFileType.Float32)
                 {
                     for (int i = 0; i < analogCount; i++)
-                    {//TODO добавить тест				
+                    {//TODO add test
                         this.AnalogValues[i] = System.BitConverter.ToSingle(bytes, 8 + i * 4);
                     }
                 }

@@ -17,7 +17,7 @@ namespace ComtradeHandler.Core
             private set;
         }
 
-        //DataFileHandler data;		
+        //DataFileHandler data;
 
         internal DataFileHandler Data
         {

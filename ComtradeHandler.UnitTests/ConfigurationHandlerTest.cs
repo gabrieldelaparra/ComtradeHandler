@@ -27,7 +27,7 @@ namespace ComtradeHandler.UnitTests
 BINARY
 1.00
 ";
-            var strings = str.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var strings = str.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             var configHandler = new ConfigurationHandler();
             configHandler.Parse(strings);
 
@@ -41,10 +41,10 @@ BINARY
             Assert.That(configHandler.Frequency, Is.EqualTo(50).Within(0.1));
             Assert.That(configHandler.SamplingRateCount, Is.EqualTo(0));
             Assert.That(configHandler.SampleRates.Count, Is.EqualTo(1));
-            //время1
-            //время2
+            //time1
+            //time2
             Assert.That(configHandler.DataFileType, Is.EqualTo(DataFileType.Binary));
-            //остальное дописать
+            //add the rest
         }
     }
 }

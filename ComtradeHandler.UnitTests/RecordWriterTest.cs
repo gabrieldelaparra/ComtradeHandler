@@ -135,7 +135,7 @@ namespace ComtradeHandler.UnitTests
 
             writer.SaveToFile(fullPathAsciiTwo, DataFileType.ASCII);
 
-            //TODO дописать тест - открыть сконфигурированный и проверить равенство исходному бинарному			
+            //TODO add test - open the configured one and check the equality to the original binary
         }
 
         [Test]

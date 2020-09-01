@@ -10,13 +10,13 @@ namespace ComtradeHandler.UnitTests
     public class RecordReaderTest
     {
         [Test]
-        public void TestNotSupportedExtentions()
+        public void TestNotSupportedExtensions()
         {
-            Assert.Throws<InvalidOperationException>(() => new RecordReader("notComtradeExtentions.trr"));
+            Assert.Throws<InvalidOperationException>(() => new RecordReader("notComtradeExtension.trr"));
         }
 
         /// <summary>
-        /// Success only on maintainer machine 
+        /// Success only on maintainer machine
         /// </summary>
         [Test]
         public void TestOpenFile()
@@ -42,12 +42,12 @@ namespace ComtradeHandler.UnitTests
             //record=new RecordReader(@"D:\YandexDisk\Oscillogram\Sepam_StopingGenerator_B\1.DAT");
             //record.GetTimeLine();
             //record.GetAnalogPrimaryChannel(0);
-            //record.GetDigitalChannel(0);	
+            //record.GetDigitalChannel(0);
 
             //record=new RecordReader(@"D:\YandexDisk\Oscillogram\Undefined_2013_B32\000.DAT");
             //record.GetTimeLine();
             //record.GetAnalogPrimaryChannel(0);
-            //record.GetDigitalChannel(0);			
+            //record.GetDigitalChannel(0);
         }
     }
 }

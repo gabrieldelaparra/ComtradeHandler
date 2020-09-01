@@ -94,7 +94,7 @@ namespace ComtradeHandler.Core
         /// <summary>
         /// According STD for COMTRADE
         /// Parameter 'PS'
-        /// Indicates whether the converted data is in primary (P) or secondary (S) values 
+        /// Indicates whether the converted data is in primary (P) or secondary (S) values
         /// </summary>
         public readonly bool IsPrimary = true;
 
