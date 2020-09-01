@@ -14,22 +14,22 @@ namespace Wisp.Comtrade
 		public void TestOpenFile()
 		{	
 			RecordReader record;
-			record=new RecordReader(@"D:\YandexDisk\Oscillogram\Undefined_A\1.dat");
+			record=new RecordReader(@"Resources\sample_ascii.dat");
 			record.GetTimeLine();
 			record.GetAnalogPrimaryChannel(0);
 			record.GetDigitalChannel(0);
 			
-			record=new RecordReader(@"D:\YandexDisk\Oscillogram\LossOfSyncronism_B\ALAR.DAT");
+			record=new RecordReader(@"Resources\sample_bin.DAT");
 			record.GetTimeLine();
 			record.GetAnalogPrimaryChannel(0);
 			record.GetDigitalChannel(0);
 			
-			record=new RecordReader(@"D:\YandexDisk\Oscillogram\Ground Fault_B\3.cFg");
+			record=new RecordReader(@"Resources\sample_ascii.cFg");
 			record.GetTimeLine();
 			record.GetAnalogPrimaryChannel(0);
 			record.GetDigitalChannel(0);
 			
-			record=new RecordReader(@"D:\YandexDisk\Oscillogram\Ground Fault_B\3.cfg");					
+			record=new RecordReader(@"Resources\sample_bin.cfg");					
 		}
 		
 		[Test]

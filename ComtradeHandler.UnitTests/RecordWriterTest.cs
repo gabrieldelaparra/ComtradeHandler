@@ -7,9 +7,8 @@ namespace Wisp.Comtrade
 	[TestFixture]
     public class RecordWriterTest
 	{
-		const string pathDirectory=   @"D:\YandexDisk\Oscillogram\AutoCreated\";
-		const string fullPathAsciiOne=@"D:\YandexDisk\Oscillogram\AutoCreated\ascii.cfg";
-		const string fullPathAsciiTwo=@"D:\YandexDisk\Oscillogram\AutoCreated\ascii2.cfg";
+        const string fullPathAsciiOne=@"outputAscii.cfg";
+		const string fullPathAsciiTwo=@"outputAscii2.cfg";
 		
 		
 		RecordWriter GetWriterToTest()
@@ -133,7 +132,7 @@ namespace Wisp.Comtrade
 		[Test, Order(2)]
 		public void SaveToFileBinaryTest()
 		{
-			const string fullPath=@"D:\YandexDisk\Oscillogram\AutoCreated\bin.cfg";
+			const string fullPath=@"outputBin.cfg";
 			var writer=this.GetWriterToTest();
 			writer.SaveToFile(fullPath,DataFileType.Binary);			
 			
@@ -143,7 +142,7 @@ namespace Wisp.Comtrade
 		[Test, Order(3)]
 		public void CreateWriterFromReaderTest()
 		{
-			const string fullPath=@"D:\YandexDisk\Oscillogram\AutoCreated\bin.cfg";
+			const string fullPath=@"outputBin.cfg";
 			var reader=new RecordReader(fullPath);
 			var writer=new RecordWriter(reader);			
 			
