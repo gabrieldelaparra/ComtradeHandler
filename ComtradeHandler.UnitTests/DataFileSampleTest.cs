@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
-using ComtradeHandler.Core;
+﻿using ComtradeHandler.Core;
+
 using NUnit.Framework;
+
+using System.Collections.Generic;
 
 namespace ComtradeHandler.UnitTests
 {
@@ -93,7 +95,8 @@ namespace ComtradeHandler.UnitTests
 
             var result = sample.ToByteDAT(DataFileType.Binary, analogInformations);
 
-            for (var i = 0; i < bytes.Length; i++) {
+            for (var i = 0; i < bytes.Length; i++)
+            {
                 Assert.That(result[i], Is.EqualTo(bytes[i]));
             }
         }

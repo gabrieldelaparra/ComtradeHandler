@@ -1,6 +1,8 @@
-﻿using System;
-using ComtradeHandler.Core;
+﻿using ComtradeHandler.Core;
+
 using NUnit.Framework;
+
+using System;
 
 namespace ComtradeHandler.UnitTests
 {
@@ -34,7 +36,7 @@ namespace ComtradeHandler.UnitTests
             writer.AddDigitalChannel(new DigitalChannelInformation("channel16b", ""));
             writer.AddDigitalChannel(new DigitalChannelInformation("channel17b", ""));
             writer.AddSample(0,
-                new double[] {0, 0, 0},
+                new double[] { 0, 0, 0 },
                 new[] {
                     true, true, true, true,
                     true, true, true, true,
@@ -43,7 +45,7 @@ namespace ComtradeHandler.UnitTests
                     true
                 });
             writer.AddSample(500,
-                new[] {1.0, 2.0, 3.0},
+                new[] { 1.0, 2.0, 3.0 },
                 new[] {
                     false, false, false, false,
                     false, false, false, false,
@@ -52,7 +54,7 @@ namespace ComtradeHandler.UnitTests
                     false
                 });
             writer.AddSample(1000,
-                new[] {-1.0, 2.0, -3.5},
+                new[] { -1.0, 2.0, -3.5 },
                 new[] {
                     false, false, false, false,
                     true, true, true, true,
@@ -62,7 +64,7 @@ namespace ComtradeHandler.UnitTests
                 });
 
             writer.AddSample(1500,
-                new[] {5.0, 5.0, 5.0},
+                new[] { 5.0, 5.0, 5.0 },
                 new[] {
                     false, false, false, false,
                     true, true, true, true,

@@ -1,4 +1,5 @@
 ﻿using ComtradeHandler.Core;
+
 using NUnit.Framework;
 
 namespace ComtradeHandler.UnitTests

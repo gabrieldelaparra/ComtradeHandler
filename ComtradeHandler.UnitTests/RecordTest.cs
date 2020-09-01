@@ -1,6 +1,8 @@
-﻿using System;
-using ComtradeHandler.Core;
+﻿using ComtradeHandler.Core;
+
 using NUnit.Framework;
+
+using System;
 
 namespace ComtradeHandler.UnitTests
 {

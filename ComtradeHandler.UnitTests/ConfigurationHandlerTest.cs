@@ -1,6 +1,8 @@
-﻿using System;
-using ComtradeHandler.Core;
+﻿using ComtradeHandler.Core;
+
 using NUnit.Framework;
+
+using System;
 
 namespace ComtradeHandler.UnitTests
 {
@@ -25,7 +27,7 @@ namespace ComtradeHandler.UnitTests
 BINARY
 1.00
 ";
-            var strings = str.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+            var strings = str.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             var configHandler = new ConfigurationHandler();
             configHandler.Parse(strings);
 
