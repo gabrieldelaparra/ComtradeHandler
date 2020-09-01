@@ -225,10 +225,10 @@ namespace ComtradeHandler.Core
                 {
                     double min = this.sampleList.Min(x => x.AnalogValues[i]);
                     double max = this.sampleList.Max(x => x.AnalogValues[i]);
-                    this.analogChannelInformationList[i].b = (max + min) / 2.0;
+                    this.analogChannelInformationList[i].MultiplierB = (max + min) / 2.0;
                     if (max != min)
                     {
-                        this.analogChannelInformationList[i].a = (max - min) / 32767.0;//65536						
+                        this.analogChannelInformationList[i].MultiplierA = (max - min) / 32767.0;//65536						
                     }
                     this.analogChannelInformationList[i].Min = -32767;//by standart 1999
                     this.analogChannelInformationList[i].Max = 32767;//by standart 1999					

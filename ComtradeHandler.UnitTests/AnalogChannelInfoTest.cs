@@ -18,8 +18,8 @@ namespace ComtradeHandler.UnitTests
             Assert.That(channelInfo.Phase, Is.EqualTo("N"));
             Assert.That(channelInfo.CircuitComponent, Is.EqualTo(""));
             Assert.That(channelInfo.Units, Is.EqualTo("V"));
-            Assert.That(channelInfo.a, Is.EqualTo(0.012207).Within(0.001));
-            Assert.That(channelInfo.b, Is.EqualTo(1).Within(0.001));
+            Assert.That(channelInfo.MultiplierA, Is.EqualTo(0.012207).Within(0.001));
+            Assert.That(channelInfo.MultiplierB, Is.EqualTo(1).Within(0.001));
             Assert.That(channelInfo.Skew, Is.EqualTo(2).Within(0.001));
             Assert.That(channelInfo.Min, Is.EqualTo(-32767).Within(0.001));
             Assert.That(channelInfo.Max, Is.EqualTo(32767).Within(0.001));

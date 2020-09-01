@@ -141,12 +141,12 @@ namespace ComtradeHandler.Core
 
         void ParseFrequencyLine(string frequenceLine)
         {
-            this.Frequency = Convert.ToDouble(frequenceLine.Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+            this.Frequency = Convert.ToDouble(frequenceLine.Trim(), System.Globalization.CultureInfo.InvariantCulture);
         }
 
         void ParseNumberOfSampleRates(string str)
         {
-            this.SamplingRateCount = Convert.ToInt32(str.Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+            this.SamplingRateCount = Convert.ToInt32(str.Trim(), System.Globalization.CultureInfo.InvariantCulture);
         }
 
         internal static DateTime ParseDateTime(string str)
@@ -161,12 +161,12 @@ namespace ComtradeHandler.Core
 
         void ParseDataFileType(string str)
         {
-            this.DataFileType = DataFileTypeConverter.Get(str.Trim(GlobalSettings.WhiteSpace));
+            this.DataFileType = DataFileTypeConverter.Get(str.Trim());
         }
 
         void ParseTimeMultiplicationFactor(string str)
         {
-            this.TimeMultiplicationFactor = Convert.ToDouble(str.Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+            this.TimeMultiplicationFactor = Convert.ToDouble(str.Trim(), System.Globalization.CultureInfo.InvariantCulture);
         }
     }
 }

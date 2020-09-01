@@ -150,7 +150,7 @@ namespace ComtradeHandler.Core
         {
             for (int i = 0; i < this.AnalogValues.Length; i++)
             {
-                short s = (short)((this.AnalogValues[i] - analogInformations[i].b) / analogInformations[i].a);
+                short s = (short)((this.AnalogValues[i] - analogInformations[i].MultiplierB) / analogInformations[i].MultiplierA);
                 System.BitConverter.GetBytes(s).CopyTo(result, 8 + i * 2);
             }
         }
@@ -159,7 +159,7 @@ namespace ComtradeHandler.Core
         {
             for (int i = 0; i < this.AnalogValues.Length; i++)
             {
-                int s = (int)((this.AnalogValues[i] - analogInformations[i].b) / analogInformations[i].a);
+                int s = (int)((this.AnalogValues[i] - analogInformations[i].MultiplierB) / analogInformations[i].MultiplierA);
                 System.BitConverter.GetBytes(s).CopyTo(result, 8 + i * 4);
             }
         }

@@ -18,8 +18,8 @@ namespace ComtradeHandler.Core
         public SampleRate(string sampleRateLine)
         {
             var values = sampleRateLine.Split(GlobalSettings.Comma);
-            this.SamplingFrequency = Convert.ToDouble(values[0].Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
-            this.LastSampleNumber = Convert.ToInt32(values[1].Trim(GlobalSettings.WhiteSpace));
+            this.SamplingFrequency = Convert.ToDouble(values[0].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+            this.LastSampleNumber = Convert.ToInt32(values[1].Trim());
         }
     }
 }

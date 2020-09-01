@@ -111,8 +111,8 @@ namespace ComtradeHandler.Core
             var list = new double[this.Data.Samples.Length];
             for (int i = 0; i < this.Data.Samples.Length; i++)
             {
-                list[i] = (this.Data.Samples[i].AnalogValues[channelNumber] * this.Configuration.AnalogChannelInformationList[channelNumber].a +
-                         this.Configuration.AnalogChannelInformationList[channelNumber].b) * Kt;
+                list[i] = (this.Data.Samples[i].AnalogValues[channelNumber] * this.Configuration.AnalogChannelInformationList[channelNumber].MultiplierA +
+                         this.Configuration.AnalogChannelInformationList[channelNumber].MultiplierB) * Kt;
             }
             return list;
         }
