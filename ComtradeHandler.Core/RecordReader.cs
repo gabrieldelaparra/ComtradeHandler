@@ -43,12 +43,12 @@ namespace ComtradeHandler.Core
             string filenameWithoutExtention = System.IO.Path.GetFileNameWithoutExtension(fullPathToFile);
             string extention = System.IO.Path.GetExtension(fullPathToFile).ToLower();
 
-            if (extention == GlobalSettings.extentionCFF)
+            if (extention == GlobalSettings.ExtensionCFF)
             {
                 //TODO доделать cff
                 throw new NotImplementedException("*.cff not supported");
             }
-            else if (extention == GlobalSettings.extentionCFG || extention == GlobalSettings.extentionDAT)
+            else if (extention == GlobalSettings.ExtensionCFG || extention == GlobalSettings.ExtensionDAT)
             {
                 this.Configuration = new ConfigurationHandler(System.IO.Path.Combine(path, filenameWithoutExtention + ".cfg"));
                 this.Data = new DataFileHandler(System.IO.Path.Combine(path, filenameWithoutExtention + ".dat"), this.Configuration);
@@ -65,15 +65,15 @@ namespace ComtradeHandler.Core
         /// <returns>In microSeconds</returns>
         public IReadOnlyList<double> GetTimeLine()
         {
-            var list = new double[this.Data.samples.Length];
+            var list = new double[this.Data.Samples.Length];
 
-            if (this.Configuration.samplingRateCount == 0 ||
-               (Math.Abs(this.Configuration.sampleRates[0].samplingFrequency) < 0.01d))
+            if (this.Configuration.SamplingRateCount == 0 ||
+               (Math.Abs(this.Configuration.SampleRates[0].SamplingFrequency) < 0.01d))
             {
                 //use timestamps in samples
-                for (int i = 0; i < this.Data.samples.Length; i++)
+                for (int i = 0; i < this.Data.Samples.Length; i++)
                 {
-                    list[i] = this.Data.samples[i].timestamp * this.Configuration.timeMultiplicationFactor;
+                    list[i] = this.Data.Samples[i].Timestamp * this.Configuration.TimeMultiplicationFactor;
                 }
             }
             else
@@ -81,15 +81,15 @@ namespace ComtradeHandler.Core
                 double currentTime = 0;
                 int sampleRateIndex = 0;
                 const double secondToMicrosecond = 1000000;
-                for (int i = 0; i < this.Data.samples.Length; i++)
+                for (int i = 0; i < this.Data.Samples.Length; i++)
                 {
                     list[i] = currentTime;
-                    if (i >= this.Configuration.sampleRates[sampleRateIndex].lastSampleNumber)
+                    if (i >= this.Configuration.SampleRates[sampleRateIndex].LastSampleNumber)
                     {
                         sampleRateIndex++;
                     }
 
-                    currentTime += secondToMicrosecond / this.Configuration.sampleRates[sampleRateIndex].samplingFrequency;
+                    currentTime += secondToMicrosecond / this.Configuration.SampleRates[sampleRateIndex].SamplingFrequency;
                 }
             }
 
@@ -102,17 +102,17 @@ namespace ComtradeHandler.Core
         public IReadOnlyList<double> GetAnalogPrimaryChannel(int channelNumber)
         {
             double Kt = 1;
-            if (this.Configuration.AnalogChannelInformations[channelNumber].isPrimary == false)
+            if (this.Configuration.AnalogChannelInformationList[channelNumber].IsPrimary == false)
             {
-                Kt = this.Configuration.AnalogChannelInformations[channelNumber].primary /
-                    this.Configuration.AnalogChannelInformations[channelNumber].secondary;
+                Kt = this.Configuration.AnalogChannelInformationList[channelNumber].Primary /
+                    this.Configuration.AnalogChannelInformationList[channelNumber].Secondary;
             }
 
-            var list = new double[this.Data.samples.Length];
-            for (int i = 0; i < this.Data.samples.Length; i++)
+            var list = new double[this.Data.Samples.Length];
+            for (int i = 0; i < this.Data.Samples.Length; i++)
             {
-                list[i] = (this.Data.samples[i].analogs[channelNumber] * this.Configuration.AnalogChannelInformations[channelNumber].a +
-                         this.Configuration.AnalogChannelInformations[channelNumber].b) * Kt;
+                list[i] = (this.Data.Samples[i].AnalogValues[channelNumber] * this.Configuration.AnalogChannelInformationList[channelNumber].a +
+                         this.Configuration.AnalogChannelInformationList[channelNumber].b) * Kt;
             }
             return list;
         }
@@ -122,10 +122,10 @@ namespace ComtradeHandler.Core
         /// </summary>
         public IReadOnlyList<bool> GetDigitalChannel(int channelNumber)
         {
-            var list = new bool[this.Data.samples.Length];
-            for (int i = 0; i < this.Data.samples.Length; i++)
+            var list = new bool[this.Data.Samples.Length];
+            for (int i = 0; i < this.Data.Samples.Length; i++)
             {
-                list[i] = this.Data.samples[i].digitals[channelNumber];
+                list[i] = this.Data.Samples[i].DigitalValues[channelNumber];
             }
             return list;
         }

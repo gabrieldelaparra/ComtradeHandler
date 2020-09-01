@@ -31,19 +31,19 @@ BINARY
             var configHandler = new ConfigurationHandler();
             configHandler.Parse(strings);
 
-            Assert.That(configHandler.stationName, Is.EqualTo("MASHUK-W2D-C60-1"));
-            Assert.That(configHandler.deviceId, Is.EqualTo("520"));
-            Assert.That(configHandler.version, Is.EqualTo(ComtradeVersion.V1999));
-            Assert.That(configHandler.analogChannelsCount, Is.EqualTo(2));
-            Assert.That(configHandler.AnalogChannelInformations.Count, Is.EqualTo(2));
-            Assert.That(configHandler.digitalChannelsCount, Is.EqualTo(3));
-            Assert.That(configHandler.DigitalChannelInformations.Count, Is.EqualTo(3));
-            Assert.That(configHandler.frequency, Is.EqualTo(50).Within(0.1));
-            Assert.That(configHandler.samplingRateCount, Is.EqualTo(0));
-            Assert.That(configHandler.sampleRates.Count, Is.EqualTo(1));
+            Assert.That(configHandler.StationName, Is.EqualTo("MASHUK-W2D-C60-1"));
+            Assert.That(configHandler.DeviceId, Is.EqualTo("520"));
+            Assert.That(configHandler.Version, Is.EqualTo(ComtradeVersion.V1999));
+            Assert.That(configHandler.AnalogChannelsCount, Is.EqualTo(2));
+            Assert.That(configHandler.AnalogChannelInformationList.Count, Is.EqualTo(2));
+            Assert.That(configHandler.DigitalChannelsCount, Is.EqualTo(3));
+            Assert.That(configHandler.DigitalChannelInformationList.Count, Is.EqualTo(3));
+            Assert.That(configHandler.Frequency, Is.EqualTo(50).Within(0.1));
+            Assert.That(configHandler.SamplingRateCount, Is.EqualTo(0));
+            Assert.That(configHandler.SampleRates.Count, Is.EqualTo(1));
             //время1
             //время2
-            Assert.That(configHandler.dataFileType, Is.EqualTo(DataFileType.Binary));
+            Assert.That(configHandler.DataFileType, Is.EqualTo(DataFileType.Binary));
             //остальное дописать
         }
     }

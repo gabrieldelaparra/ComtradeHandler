@@ -7,43 +7,34 @@ namespace ComtradeHandler.Core
     /// </summary>
     public class AnalogChannelInformation
     {
-        int index = 0;
+        /// <summary>
+        /// According STD for COMTRADE
+        /// </summary>
+        public int Index { get; internal set; } = 0;
 
         /// <summary>
         /// According STD for COMTRADE
         /// </summary>
-        public int Index
-        {
-            get
-            {
-                return index;
-            }
-            internal set
-            {
-                this.index = value;
-            }
-        }
+        public string Name { get; }
 
         /// <summary>
         /// According STD for COMTRADE
         /// </summary>
-        public readonly string name = string.Empty;
+        public string Phase { get; }
+
         /// <summary>
         /// According STD for COMTRADE
         /// </summary>
-        public readonly string phase = string.Empty;
+        public string CircuitComponent { get; }
+
         /// <summary>
         /// According STD for COMTRADE
         /// </summary>
-        public readonly string circuitComponent = string.Empty;
-        /// <summary>
-        /// According STD for COMTRADE
-        /// </summary>
-        public readonly string units = "NONE";
+        public string Units { get; } = "NONE";
 
         public double a = 1.0;
         public double b = 0;
-        public readonly double skew = 0;
+        public double Skew { get; } = 0;
 
         /// <summary>
         /// According STD for COMTRADE
@@ -58,63 +49,65 @@ namespace ComtradeHandler.Core
         /// <summary>
         /// According STD for COMTRADE
         /// </summary>
-        public readonly double primary = 1.0;
+        public readonly double Primary = 1.0;
         /// <summary>
         /// According STD for COMTRADE
         /// </summary>
-        public readonly double secondary = 1.0;
+        public readonly double Secondary = 1.0;
 
-        public readonly bool isPrimary = true;
+        public readonly bool IsPrimary = true;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public AnalogChannelInformation(string name, string phase)
         {
-            this.name = name;
-            this.phase = phase;
+            this.Name = name;
+            this.Phase = phase;
         }
 
         public AnalogChannelInformation(string analogLine)
         {
-            var values = analogLine.Split(GlobalSettings.commaDelimiter);
+            //TODO: Check if line length == 13;
 
-            this.index = Convert.ToInt32(values[0].Trim(GlobalSettings.whiteSpace), System.Globalization.CultureInfo.InvariantCulture);
-            this.name = values[1].Trim(GlobalSettings.whiteSpace);
-            this.phase = values[2].Trim(GlobalSettings.whiteSpace);
-            this.circuitComponent = values[3].Trim(GlobalSettings.whiteSpace);
-            this.units = values[4].Trim(GlobalSettings.whiteSpace);
-            this.a = Convert.ToDouble(values[5].Trim(GlobalSettings.whiteSpace), System.Globalization.CultureInfo.InvariantCulture);
-            this.b = Convert.ToDouble(values[6].Trim(GlobalSettings.whiteSpace), System.Globalization.CultureInfo.InvariantCulture);
-            this.skew = Convert.ToDouble(values[7].Trim(GlobalSettings.whiteSpace), System.Globalization.CultureInfo.InvariantCulture);
-            this.Min = Convert.ToDouble(values[8].Trim(GlobalSettings.whiteSpace), System.Globalization.CultureInfo.InvariantCulture);
-            this.Max = Convert.ToDouble(values[9].Trim(GlobalSettings.whiteSpace), System.Globalization.CultureInfo.InvariantCulture);
-            this.primary = Convert.ToDouble(values[10].Trim(GlobalSettings.whiteSpace), System.Globalization.CultureInfo.InvariantCulture);
-            this.secondary = Convert.ToDouble(values[11].Trim(GlobalSettings.whiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+            var values = analogLine.Split(GlobalSettings.Comma);
 
-            string isPrimaryText = values[12].Trim(GlobalSettings.whiteSpace);
+            this.Index = Convert.ToInt32(values[0].Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+            this.Name = values[1].Trim(GlobalSettings.WhiteSpace);
+            this.Phase = values[2].Trim(GlobalSettings.WhiteSpace);
+            this.CircuitComponent = values[3].Trim(GlobalSettings.WhiteSpace);
+            this.Units = values[4].Trim(GlobalSettings.WhiteSpace);
+            this.a = Convert.ToDouble(values[5].Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+            this.b = Convert.ToDouble(values[6].Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+            this.Skew = Convert.ToDouble(values[7].Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+            this.Min = Convert.ToDouble(values[8].Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+            this.Max = Convert.ToDouble(values[9].Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+            this.Primary = Convert.ToDouble(values[10].Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+            this.Secondary = Convert.ToDouble(values[11].Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+
+            var isPrimaryText = values[12].Trim(GlobalSettings.WhiteSpace);
             if (isPrimaryText == "S" || isPrimaryText == "s")
             {
-                this.isPrimary = false;
+                this.IsPrimary = false;
             }
 
         }
 
         internal string ToCFGString()
         {
-            return this.Index.ToString() + GlobalSettings.commaDelimiter +
-                this.name + GlobalSettings.commaDelimiter +
-                this.phase + GlobalSettings.commaDelimiter +
-                this.circuitComponent + GlobalSettings.commaDelimiter +
-                this.units + GlobalSettings.commaDelimiter +
-                this.a.ToString(System.Globalization.CultureInfo.InvariantCulture) + GlobalSettings.commaDelimiter +
-                this.b.ToString(System.Globalization.CultureInfo.InvariantCulture) + GlobalSettings.commaDelimiter +
-                this.skew.ToString(System.Globalization.CultureInfo.InvariantCulture) + GlobalSettings.commaDelimiter +
-                this.Min.ToString(System.Globalization.CultureInfo.InvariantCulture) + GlobalSettings.commaDelimiter +
-                this.Max.ToString(System.Globalization.CultureInfo.InvariantCulture) + GlobalSettings.commaDelimiter +
-                this.primary.ToString(System.Globalization.CultureInfo.InvariantCulture) + GlobalSettings.commaDelimiter +
-                this.secondary.ToString(System.Globalization.CultureInfo.InvariantCulture) + GlobalSettings.commaDelimiter +
-                (this.isPrimary ? "P" : "S");
+            return this.Index.ToString() + GlobalSettings.Comma +
+                this.Name + GlobalSettings.Comma +
+                this.Phase + GlobalSettings.Comma +
+                this.CircuitComponent + GlobalSettings.Comma +
+                this.Units + GlobalSettings.Comma +
+                this.a.ToString(System.Globalization.CultureInfo.InvariantCulture) + GlobalSettings.Comma +
+                this.b.ToString(System.Globalization.CultureInfo.InvariantCulture) + GlobalSettings.Comma +
+                this.Skew.ToString(System.Globalization.CultureInfo.InvariantCulture) + GlobalSettings.Comma +
+                this.Min.ToString(System.Globalization.CultureInfo.InvariantCulture) + GlobalSettings.Comma +
+                this.Max.ToString(System.Globalization.CultureInfo.InvariantCulture) + GlobalSettings.Comma +
+                this.Primary.ToString(System.Globalization.CultureInfo.InvariantCulture) + GlobalSettings.Comma +
+                this.Secondary.ToString(System.Globalization.CultureInfo.InvariantCulture) + GlobalSettings.Comma +
+                (this.IsPrimary ? "P" : "S");
         }
     }
 }

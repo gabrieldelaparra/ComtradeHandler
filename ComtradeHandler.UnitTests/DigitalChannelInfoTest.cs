@@ -14,10 +14,10 @@ namespace ComtradeHandler.UnitTests
             var channelInfo = new DigitalChannelInformation(str);
 
             Assert.That(channelInfo.Index, Is.EqualTo(4));
-            Assert.That(channelInfo.name, Is.EqualTo("W8a_KQC C    Off"));
-            Assert.That(channelInfo.phase, Is.EqualTo(""));
-            Assert.That(channelInfo.circuitComponent, Is.EqualTo(""));
-            Assert.That(channelInfo.normalState, Is.EqualTo(false));
+            Assert.That(channelInfo.Name, Is.EqualTo("W8a_KQC C    Off"));
+            Assert.That(channelInfo.Phase, Is.EqualTo(""));
+            Assert.That(channelInfo.CircuitComponent, Is.EqualTo(""));
+            Assert.That(channelInfo.NormalState, Is.EqualTo(false));
         }
     }
 }

@@ -13,35 +13,36 @@ namespace ComtradeHandler.Core
         /// <summary>
         /// 
         /// </summary>
-        public string stationName = string.Empty;
+        public string StationName { get; }
+
         /// <summary>
         /// 
         /// </summary>
-        public string deviceId = string.Empty;
+        public string DeviceId { get; }
 
-        List<DataFileSample> samples;
-        List<AnalogChannelInformation> analogChannelInformations;
-        List<DigitalChannelInformation> digitalChannelInformations;
-        List<SampleRate> sampleRates;
+        List<DataFileSample> sampleList;
+        List<AnalogChannelInformation> analogChannelInformationList;
+        List<DigitalChannelInformation> digitalChannelInformationList;
+        List<SampleRate> sampleRateList;
 
         /// <summary>
         /// Time of first value in data
         /// </summary>
-        public DateTime startTime;
+        public DateTime StartTime;
 
         /// <summary>
         /// Time of trigger point
         /// </summary>
-        public DateTime triggerTime;
+        public DateTime TriggerTime;
 
         /// <summary>
         /// Create empty writer
         /// </summary>
         public RecordWriter()
         {
-            this.samples = new List<DataFileSample>();
-            this.analogChannelInformations = new List<AnalogChannelInformation>();
-            this.digitalChannelInformations = new List<DigitalChannelInformation>();
+            this.sampleList = new List<DataFileSample>();
+            this.analogChannelInformationList = new List<AnalogChannelInformation>();
+            this.digitalChannelInformationList = new List<DigitalChannelInformation>();
         }
 
         /// <summary>
@@ -49,16 +50,16 @@ namespace ComtradeHandler.Core
         /// </summary>
         public RecordWriter(RecordReader reader)
         {
-            this.stationName = reader.Configuration.stationName;
-            this.deviceId = reader.Configuration.deviceId;
+            this.StationName = reader.Configuration.StationName;
+            this.DeviceId = reader.Configuration.DeviceId;
 
-            this.samples = new List<DataFileSample>(reader.Data.samples);
-            this.analogChannelInformations = new List<AnalogChannelInformation>(reader.Configuration.AnalogChannelInformations);
-            this.digitalChannelInformations = new List<DigitalChannelInformation>(reader.Configuration.DigitalChannelInformations);
-            this.sampleRates = new List<SampleRate>(reader.Configuration.sampleRates);
+            this.sampleList = new List<DataFileSample>(reader.Data.Samples);
+            this.analogChannelInformationList = new List<AnalogChannelInformation>(reader.Configuration.AnalogChannelInformationList);
+            this.digitalChannelInformationList = new List<DigitalChannelInformation>(reader.Configuration.DigitalChannelInformationList);
+            this.sampleRateList = new List<SampleRate>(reader.Configuration.SampleRates);
 
-            this.startTime = reader.Configuration.startTime;
-            this.triggerTime = reader.Configuration.triggerTime;
+            this.StartTime = reader.Configuration.StartTime;
+            this.TriggerTime = reader.Configuration.TriggerTime;
         }
 
         /// <summary>
@@ -66,8 +67,8 @@ namespace ComtradeHandler.Core
         /// </summary>
         public void AddAnalogChannel(AnalogChannelInformation analogChannel)
         {
-            analogChannel.Index = this.analogChannelInformations.Count + 1;
-            this.analogChannelInformations.Add(analogChannel);
+            analogChannel.Index = this.analogChannelInformationList.Count + 1;
+            this.analogChannelInformationList.Add(analogChannel);
         }
 
         /// <summary>
@@ -75,8 +76,8 @@ namespace ComtradeHandler.Core
         /// </summary>
         public void AddDigitalChannel(DigitalChannelInformation digitalChannel)
         {
-            digitalChannel.Index = this.digitalChannelInformations.Count + 1;
-            this.digitalChannelInformations.Add(digitalChannel);
+            digitalChannel.Index = this.digitalChannelInformationList.Count + 1;
+            this.digitalChannelInformationList.Add(digitalChannel);
         }
 
         /// <summary>
@@ -98,21 +99,21 @@ namespace ComtradeHandler.Core
                 notNullDigitals = new bool[0];
             }
 
-            if (this.analogChannelInformations.Count != notNullAnalogs.Length)
+            if (this.analogChannelInformationList.Count != notNullAnalogs.Length)
             {
                 throw new InvalidOperationException(string.Format("Analogs count ({0}) must be equal to channels count ({1})",
                                                                   notNullAnalogs.Length,
-                                                                  this.analogChannelInformations.Count));
+                                                                  this.analogChannelInformationList.Count));
             }
 
-            if (this.digitalChannelInformations.Count != notNullDigitals.Length)
+            if (this.digitalChannelInformationList.Count != notNullDigitals.Length)
             {
                 throw new InvalidOperationException(string.Format("Digitals count ({0}) must be equal to channels count ({1})",
                                                                   notNullDigitals.Length,
-                                                                  this.digitalChannelInformations.Count));
+                                                                  this.digitalChannelInformationList.Count));
             }
 
-            this.samples.Add(new DataFileSample(this.samples.Count + 1, timestamp, notNullAnalogs, notNullDigitals));
+            this.sampleList.Add(new DataFileSample(this.sampleList.Count + 1, timestamp, notNullAnalogs, notNullDigitals));
         }
 
         /// <summary>
@@ -136,46 +137,46 @@ namespace ComtradeHandler.Core
             //CFG part
             var strings = new List<string>();
 
-            strings.Add(this.stationName + GlobalSettings.commaDelimiter +
-                        this.deviceId + GlobalSettings.commaDelimiter +
+            strings.Add(this.StationName + GlobalSettings.Comma +
+                        this.DeviceId + GlobalSettings.Comma +
                         "1999");
 
-            strings.Add((this.analogChannelInformations.Count + this.digitalChannelInformations.Count).ToString() + GlobalSettings.commaDelimiter +
-                        this.analogChannelInformations.Count.ToString() + "A" + GlobalSettings.commaDelimiter +
-                        this.digitalChannelInformations.Count.ToString() + "D");
+            strings.Add((this.analogChannelInformationList.Count + this.digitalChannelInformationList.Count).ToString() + GlobalSettings.Comma +
+                        this.analogChannelInformationList.Count.ToString() + "A" + GlobalSettings.Comma +
+                        this.digitalChannelInformationList.Count.ToString() + "D");
 
-            for (int i = 0; i < this.analogChannelInformations.Count; i++)
+            for (int i = 0; i < this.analogChannelInformationList.Count; i++)
             {
-                strings.Add(this.analogChannelInformations[i].ToCFGString());
+                strings.Add(this.analogChannelInformationList[i].ToCFGString());
             }
 
-            for (int i = 0; i < this.digitalChannelInformations.Count; i++)
+            for (int i = 0; i < this.digitalChannelInformationList.Count; i++)
             {
-                strings.Add(this.digitalChannelInformations[i].ToCFGString());
+                strings.Add(this.digitalChannelInformationList[i].ToCFGString());
             }
 
             strings.Add("50.0");
 
-            if (this.sampleRates == null || this.sampleRates.Count == 0)
+            if (this.sampleRateList == null || this.sampleRateList.Count == 0)
             {
                 strings.Add("0");
-                strings.Add("0" + GlobalSettings.commaDelimiter +
-                            this.samples.Count.ToString());
+                strings.Add("0" + GlobalSettings.Comma +
+                            this.sampleList.Count.ToString());
             }
             else
             {
-                strings.Add(this.sampleRates.Count.ToString());
-                foreach (var sampleRate in this.sampleRates)
+                strings.Add(this.sampleRateList.Count.ToString());
+                foreach (var sampleRate in this.sampleRateList)
                 {
-                    strings.Add(sampleRate.samplingFrequency.ToString() + GlobalSettings.commaDelimiter +
-                                sampleRate.lastSampleNumber.ToString());
+                    strings.Add(sampleRate.SamplingFrequency.ToString() + GlobalSettings.Comma +
+                                sampleRate.LastSampleNumber.ToString());
                 }
             }
 
-            strings.Add(this.startTime.ToString(GlobalSettings.dateTimeFormat,
+            strings.Add(this.StartTime.ToString(GlobalSettings.DateTimeFormat,
                                    System.Globalization.CultureInfo.InvariantCulture));
 
-            strings.Add(this.triggerTime.ToString(GlobalSettings.dateTimeFormat,
+            strings.Add(this.TriggerTime.ToString(GlobalSettings.DateTimeFormat,
                                    System.Globalization.CultureInfo.InvariantCulture));
 
             switch (dataFileType)
@@ -190,15 +191,15 @@ namespace ComtradeHandler.Core
 
             strings.Add("1.0");
 
-            System.IO.File.WriteAllLines(System.IO.Path.Combine(path, filenameWithoutExtention) + GlobalSettings.extentionCFG, strings);
+            System.IO.File.WriteAllLines(System.IO.Path.Combine(path, filenameWithoutExtention) + GlobalSettings.ExtensionCFG, strings);
 
             //DAT part
-            string dataFileFullPath = System.IO.Path.Combine(path, filenameWithoutExtention) + GlobalSettings.extentionDAT;
+            string dataFileFullPath = System.IO.Path.Combine(path, filenameWithoutExtention) + GlobalSettings.ExtensionDAT;
 
             if (dataFileType == DataFileType.ASCII)
             {
                 strings = new List<string>();
-                foreach (var sample in this.samples)
+                foreach (var sample in this.sampleList)
                 {
                     strings.Add(sample.ToASCIIDAT());
                 }
@@ -207,9 +208,9 @@ namespace ComtradeHandler.Core
             else
             {
                 var bytes = new List<byte>();
-                foreach (var sample in this.samples)
+                foreach (var sample in this.sampleList)
                 {
-                    bytes.AddRange(sample.ToByteDAT(dataFileType, this.analogChannelInformations));
+                    bytes.AddRange(sample.ToByteDAT(dataFileType, this.analogChannelInformationList));
                 }
                 System.IO.File.WriteAllBytes(dataFileFullPath, bytes.ToArray());
             }
@@ -220,22 +221,22 @@ namespace ComtradeHandler.Core
             if (dataFileType == DataFileType.Binary ||
                dataFileType == DataFileType.Binary32)
             {//i make it same, but in theory, bin32 can be more precise			
-                for (int i = 0; i < this.analogChannelInformations.Count; i++)
+                for (int i = 0; i < this.analogChannelInformationList.Count; i++)
                 {
-                    double min = this.samples.Min(x => x.analogs[i]);
-                    double max = this.samples.Max(x => x.analogs[i]);
-                    this.analogChannelInformations[i].b = (max + min) / 2.0;
+                    double min = this.sampleList.Min(x => x.AnalogValues[i]);
+                    double max = this.sampleList.Max(x => x.AnalogValues[i]);
+                    this.analogChannelInformationList[i].b = (max + min) / 2.0;
                     if (max != min)
                     {
-                        this.analogChannelInformations[i].a = (max - min) / 32767.0;//65536						
+                        this.analogChannelInformationList[i].a = (max - min) / 32767.0;//65536						
                     }
-                    this.analogChannelInformations[i].Min = -32767;//by standart 1999
-                    this.analogChannelInformations[i].Max = 32767;//by standart 1999					
+                    this.analogChannelInformationList[i].Min = -32767;//by standart 1999
+                    this.analogChannelInformationList[i].Max = 32767;//by standart 1999					
                 }
             }
             else if (dataFileType == DataFileType.ASCII)
             {
-                foreach (var analogChannelInformation in this.analogChannelInformations)
+                foreach (var analogChannelInformation in this.analogChannelInformationList)
                 {
                     analogChannelInformation.Min = -32767;//by standart 1999
                     analogChannelInformation.Max = 32767;//by standart 1999

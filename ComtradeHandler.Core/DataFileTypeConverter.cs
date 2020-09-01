@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 
 namespace ComtradeHandler.Core
 {
@@ -9,27 +8,18 @@ namespace ComtradeHandler.Core
         internal static DataFileType Get(string text)
         {
             text = text.ToLowerInvariant();
-            if (text == "ascii")
-            {
-                return DataFileType.ASCII;
+            switch (text) {
+                case "ascii":
+                    return DataFileType.ASCII;
+                case "binary":
+                    return DataFileType.Binary;
+                case "binary32":
+                    return DataFileType.Binary32;
+                case "float32":
+                    return DataFileType.Float32;
+                default:
+                    throw new InvalidOperationException("Undefined *.dat file format");
             }
-
-            if (text == "binary")
-            {
-                return DataFileType.Binary;
-            }
-
-            if (text == "binary32")
-            {
-                return DataFileType.Binary32;
-            }
-
-            if (text == "float32")
-            {
-                return DataFileType.Float32;
-            }
-
-            throw new InvalidOperationException("Undefined *.dat file format");
         }
     }
 

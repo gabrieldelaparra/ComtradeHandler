@@ -15,22 +15,22 @@ namespace ComtradeHandler.UnitTests
             const string str = "5 ,667 , -760, 1274,72,, 3.4028235e38,-3.4028235e38,0 ,0,0 ,0,1,1";
             var sample = new DataFileSample(str, 6, 6);
 
-            Assert.That(sample.number, Is.EqualTo(5));
-            Assert.That(sample.timestamp, Is.EqualTo(667));
-            Assert.That(sample.analogs.Length, Is.EqualTo(6));
-            Assert.That(sample.analogs[0], Is.EqualTo(-760));
-            Assert.That(sample.analogs[1], Is.EqualTo(1274));
-            Assert.That(sample.analogs[2], Is.EqualTo(72));
-            Assert.That(sample.analogs[3], Is.EqualTo(0));
-            Assert.That(sample.analogs[4], Is.EqualTo(3.4028235e38));
-            Assert.That(sample.analogs[5], Is.EqualTo(-3.4028235e38));
-            Assert.That(sample.digitals.Length, Is.EqualTo(6));
-            Assert.That(sample.digitals[0], Is.EqualTo(false));
-            Assert.That(sample.digitals[1], Is.EqualTo(false));
-            Assert.That(sample.digitals[2], Is.EqualTo(false));
-            Assert.That(sample.digitals[3], Is.EqualTo(false));
-            Assert.That(sample.digitals[4], Is.EqualTo(true));
-            Assert.That(sample.digitals[5], Is.EqualTo(true));
+            Assert.That(sample.Number, Is.EqualTo(5));
+            Assert.That(sample.Timestamp, Is.EqualTo(667));
+            Assert.That(sample.AnalogValues.Length, Is.EqualTo(6));
+            Assert.That(sample.AnalogValues[0], Is.EqualTo(-760));
+            Assert.That(sample.AnalogValues[1], Is.EqualTo(1274));
+            Assert.That(sample.AnalogValues[2], Is.EqualTo(72));
+            Assert.That(sample.AnalogValues[3], Is.EqualTo(0));
+            Assert.That(sample.AnalogValues[4], Is.EqualTo(3.4028235e38));
+            Assert.That(sample.AnalogValues[5], Is.EqualTo(-3.4028235e38));
+            Assert.That(sample.DigitalValues.Length, Is.EqualTo(6));
+            Assert.That(sample.DigitalValues[0], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[1], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[2], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[3], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[4], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[5], Is.EqualTo(true));
         }
 
         [Test]
@@ -50,22 +50,22 @@ namespace ComtradeHandler.UnitTests
 
             var sample = new DataFileSample(bytes, DataFileType.Binary, 6, 6);
 
-            Assert.That(sample.number, Is.EqualTo(5242885));
-            Assert.That(sample.timestamp, Is.EqualTo(667));
-            Assert.That(sample.analogs.Length, Is.EqualTo(6));
-            Assert.That(sample.analogs[0], Is.EqualTo(-760));
-            Assert.That(sample.analogs[1], Is.EqualTo(1274));
-            Assert.That(sample.analogs[2], Is.EqualTo(72));
-            Assert.That(sample.analogs[3], Is.EqualTo(61));
-            Assert.That(sample.analogs[4], Is.EqualTo(-140));
-            Assert.That(sample.analogs[5], Is.EqualTo(-502));
-            Assert.That(sample.digitals.Length, Is.EqualTo(6));
-            Assert.That(sample.digitals[0], Is.EqualTo(false));
-            Assert.That(sample.digitals[1], Is.EqualTo(false));
-            Assert.That(sample.digitals[2], Is.EqualTo(false));
-            Assert.That(sample.digitals[3], Is.EqualTo(false));
-            Assert.That(sample.digitals[4], Is.EqualTo(true));
-            Assert.That(sample.digitals[5], Is.EqualTo(true));
+            Assert.That(sample.Number, Is.EqualTo(5242885));
+            Assert.That(sample.Timestamp, Is.EqualTo(667));
+            Assert.That(sample.AnalogValues.Length, Is.EqualTo(6));
+            Assert.That(sample.AnalogValues[0], Is.EqualTo(-760));
+            Assert.That(sample.AnalogValues[1], Is.EqualTo(1274));
+            Assert.That(sample.AnalogValues[2], Is.EqualTo(72));
+            Assert.That(sample.AnalogValues[3], Is.EqualTo(61));
+            Assert.That(sample.AnalogValues[4], Is.EqualTo(-140));
+            Assert.That(sample.AnalogValues[5], Is.EqualTo(-502));
+            Assert.That(sample.DigitalValues.Length, Is.EqualTo(6));
+            Assert.That(sample.DigitalValues[0], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[1], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[2], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[3], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[4], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[5], Is.EqualTo(true));
         }
 
         [Test]
@@ -114,48 +114,48 @@ namespace ComtradeHandler.UnitTests
 
             var sample = new DataFileSample(bytes, DataFileType.Binary, 0, 33);
 
-            Assert.That(sample.number, Is.EqualTo(5));
-            Assert.That(sample.timestamp, Is.EqualTo(667));
-            Assert.That(sample.analogs.Length, Is.EqualTo(0));
-            Assert.That(sample.digitals.Length, Is.EqualTo(33));
+            Assert.That(sample.Number, Is.EqualTo(5));
+            Assert.That(sample.Timestamp, Is.EqualTo(667));
+            Assert.That(sample.AnalogValues.Length, Is.EqualTo(0));
+            Assert.That(sample.DigitalValues.Length, Is.EqualTo(33));
 
-            Assert.That(sample.digitals[0], Is.EqualTo(true));
-            Assert.That(sample.digitals[1], Is.EqualTo(true));
-            Assert.That(sample.digitals[2], Is.EqualTo(true));
-            Assert.That(sample.digitals[3], Is.EqualTo(true));
-            Assert.That(sample.digitals[4], Is.EqualTo(false));
-            Assert.That(sample.digitals[5], Is.EqualTo(false));
-            Assert.That(sample.digitals[6], Is.EqualTo(false));
-            Assert.That(sample.digitals[7], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[0], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[1], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[2], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[3], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[4], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[5], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[6], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[7], Is.EqualTo(false));
 
-            Assert.That(sample.digitals[8], Is.EqualTo(true));
-            Assert.That(sample.digitals[9], Is.EqualTo(true));
-            Assert.That(sample.digitals[10], Is.EqualTo(true));
-            Assert.That(sample.digitals[11], Is.EqualTo(true));
-            Assert.That(sample.digitals[12], Is.EqualTo(false));
-            Assert.That(sample.digitals[13], Is.EqualTo(false));
-            Assert.That(sample.digitals[14], Is.EqualTo(false));
-            Assert.That(sample.digitals[15], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[8], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[9], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[10], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[11], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[12], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[13], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[14], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[15], Is.EqualTo(false));
 
-            Assert.That(sample.digitals[16], Is.EqualTo(false));
-            Assert.That(sample.digitals[17], Is.EqualTo(true));
-            Assert.That(sample.digitals[18], Is.EqualTo(false));
-            Assert.That(sample.digitals[19], Is.EqualTo(true));
-            Assert.That(sample.digitals[20], Is.EqualTo(true));
-            Assert.That(sample.digitals[21], Is.EqualTo(false));
-            Assert.That(sample.digitals[22], Is.EqualTo(true));
-            Assert.That(sample.digitals[23], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[16], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[17], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[18], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[19], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[20], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[21], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[22], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[23], Is.EqualTo(false));
 
-            Assert.That(sample.digitals[24], Is.EqualTo(false));
-            Assert.That(sample.digitals[25], Is.EqualTo(true));
-            Assert.That(sample.digitals[26], Is.EqualTo(false));
-            Assert.That(sample.digitals[27], Is.EqualTo(true));
-            Assert.That(sample.digitals[28], Is.EqualTo(true));
-            Assert.That(sample.digitals[29], Is.EqualTo(false));
-            Assert.That(sample.digitals[30], Is.EqualTo(true));
-            Assert.That(sample.digitals[31], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[24], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[25], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[26], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[27], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[28], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[29], Is.EqualTo(false));
+            Assert.That(sample.DigitalValues[30], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[31], Is.EqualTo(false));
 
-            Assert.That(sample.digitals[32], Is.EqualTo(true));
+            Assert.That(sample.DigitalValues[32], Is.EqualTo(true));
         }
     }
 }

@@ -7,41 +7,41 @@ namespace ComtradeHandler.Core
     /// </summary>
     public class DataFileHandler
     {
-        internal DataFileSample[] samples;
+        internal DataFileSample[] Samples;
 
-        internal const int sampleNumberLength = 4;
-        internal const int timeStampLength = 4;
-        internal const int digital16ChannelLength = 2;
+        internal const int SampleNumberLength = 4;
+        internal const int TimeStampLength = 4;
+        internal const int Digital16ChannelLength = 2;
 
         public static int GetDigitalByteCount(int digitalChannelsCount)
         {
             return
-                (digitalChannelsCount / 16 + ((digitalChannelsCount % 16) == 0 ? 0 : 1)) * DataFileHandler.digital16ChannelLength;
+                (digitalChannelsCount / 16 + ((digitalChannelsCount % 16) == 0 ? 0 : 1)) * DataFileHandler.Digital16ChannelLength;
         }
 
         public static int GetByteCount(int analogsChannelsCount, int digitalChannelsCount, DataFileType dataFileType)
         {
             int analogOneChannelLength = dataFileType == DataFileType.Binary ? 2 : 4;
-            return DataFileHandler.sampleNumberLength +
-                    DataFileHandler.timeStampLength +
+            return DataFileHandler.SampleNumberLength +
+                    DataFileHandler.TimeStampLength +
                     analogsChannelsCount * analogOneChannelLength +
                     DataFileHandler.GetDigitalByteCount(digitalChannelsCount);
         }
 
         internal DataFileHandler(string fullPathToFileDAT, ConfigurationHandler configuration)
         {
-            int samplesCount = configuration.sampleRates[configuration.sampleRates.Count - 1].lastSampleNumber;
-            this.samples = new DataFileSample[samplesCount];
+            int samplesCount = configuration.SampleRates[configuration.SampleRates.Count - 1].LastSampleNumber;
+            this.Samples = new DataFileSample[samplesCount];
 
-            if (configuration.dataFileType == DataFileType.Binary ||
-               configuration.dataFileType == DataFileType.Binary32 ||
-               configuration.dataFileType == DataFileType.Float32)
+            if (configuration.DataFileType == DataFileType.Binary ||
+               configuration.DataFileType == DataFileType.Binary32 ||
+               configuration.DataFileType == DataFileType.Float32)
             {
                 var fileContent = System.IO.File.ReadAllBytes(fullPathToFileDAT);
 
-                int oneSampleLength = DataFileHandler.GetByteCount(configuration.analogChannelsCount,
-                                                                 configuration.digitalChannelsCount,
-                                                                 configuration.dataFileType);
+                int oneSampleLength = DataFileHandler.GetByteCount(configuration.AnalogChannelsCount,
+                                                                 configuration.DigitalChannelsCount,
+                                                                 configuration.DataFileType);
 
                 for (int i = 0; i < samplesCount; i++)
                 {
@@ -50,19 +50,19 @@ namespace ComtradeHandler.Core
                     {
                         bytes[j] = fileContent[i * oneSampleLength + j];
                     }
-                    this.samples[i] = new DataFileSample(bytes, configuration.dataFileType,
-                                                       configuration.analogChannelsCount, configuration.digitalChannelsCount);
+                    this.Samples[i] = new DataFileSample(bytes, configuration.DataFileType,
+                                                       configuration.AnalogChannelsCount, configuration.DigitalChannelsCount);
                 }
 
             }
-            else if (configuration.dataFileType == DataFileType.ASCII)
+            else if (configuration.DataFileType == DataFileType.ASCII)
             {
                 var strings = System.IO.File.ReadAllLines(fullPathToFileDAT);
                 strings = strings.Where(x => x != string.Empty).ToArray();//removing empty strings (when *.dat file not following Standart)
                 for (int i = 0; i < samplesCount; i++)
                 {
-                    this.samples[i] = new DataFileSample(strings[i],
-                                                       configuration.analogChannelsCount, configuration.digitalChannelsCount);
+                    this.Samples[i] = new DataFileSample(strings[i],
+                                                       configuration.AnalogChannelsCount, configuration.DigitalChannelsCount);
                 }
             }
         }

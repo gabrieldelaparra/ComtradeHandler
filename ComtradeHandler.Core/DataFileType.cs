@@ -7,7 +7,7 @@ namespace ComtradeHandler.Core
     public enum DataFileType
     {
         /// <summary>
-        /// </summary>		
+        /// </summary>
         Undefined = 0,
         /// <summary>
         /// </summary>

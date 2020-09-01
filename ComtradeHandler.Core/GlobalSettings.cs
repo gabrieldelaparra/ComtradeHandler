@@ -6,17 +6,16 @@ namespace ComtradeHandler.Core
     /// </summary>
     public static class GlobalSettings
     {
-        internal const char commaDelimiter = ',';
-        internal const char whiteSpace = ' ';
-        internal const string newLine = "\r\n";
-        internal const string dateTimeFormat = "dd/MM/yyyy,HH:mm:ss.ffffff";
+        internal const char Comma = ',';
+        internal const char WhiteSpace = ' ';
+        internal const string DateTimeFormat = "dd/MM/yyyy,HH:mm:ss.ffffff";
         /// <summary>
         /// Extentions of COMTRADE files
         /// </summary>
-        public const string extentionsForFileDialogFilter = "(*.cfg;*.dat;*.cff)|*.cfg;*.dat;*.cff";
-        internal const string extentionCFG = ".cfg";
-        internal const string extentionDAT = ".dat";
-        internal const string extentionCFF = ".cff";
+        public const string ExtensionsForFileDialogFilter = "(*.cfg;*.dat;*.cff)|*.cfg;*.dat;*.cff";
+        internal const string ExtensionCFG = ".cfg";
+        internal const string ExtensionDAT = ".dat";
+        internal const string ExtensionCFF = ".cff";
 
     }
 }

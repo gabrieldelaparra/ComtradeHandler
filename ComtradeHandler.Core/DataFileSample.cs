@@ -8,63 +8,64 @@ namespace ComtradeHandler.Core
     /// </summary>
     public class DataFileSample
     {
-        public int number;
+        public int Number { get; }
 
         /// <summary>
         /// microsecond or nanosecond defined by CFG (according STD)
         /// Note: i dont know, where in CFG it is defined, suppose always be microsecond
         /// </summary>
-        public int timestamp;
-        public double[] analogs;
-        public bool[] digitals;
+        public int Timestamp { get; }
 
-        public DataFileSample(int number, int timestamp, double[] analogs, bool[] digitals)
+        public double[] AnalogValues { get; }
+        public bool[] DigitalValues { get; }
+
+        public DataFileSample(int number, int timestamp, double[] analogValues, bool[] digitalValues)
         {
-            this.number = number;
-            this.timestamp = timestamp;
-            this.analogs = analogs;
-            this.digitals = digitals;
+            this.Number = number;
+            this.Timestamp = timestamp;
+            this.AnalogValues = analogValues;
+            this.DigitalValues = digitalValues;
         }
 
         public DataFileSample(string asciiLine, int analogCount, int digitalCount)
         {
-            asciiLine = asciiLine.Replace(GlobalSettings.whiteSpace.ToString(), string.Empty);
-            var strings = asciiLine.Split(GlobalSettings.commaDelimiter);
+            asciiLine = asciiLine.Replace(GlobalSettings.WhiteSpace.ToString(), string.Empty);
+            var strings = asciiLine.Split(GlobalSettings.Comma);
 
-            this.analogs = new double[analogCount];
-            this.digitals = new bool[digitalCount];
+            this.AnalogValues = new double[analogCount];
+            this.DigitalValues = new bool[digitalCount];
 
-            this.number = Convert.ToInt32(strings[0]);
-            this.timestamp = Convert.ToInt32(strings[1]);
+            this.Number = Convert.ToInt32(strings[0]);
+            this.Timestamp = Convert.ToInt32(strings[1]);
 
             for (int i = 0; i < analogCount; i++)
             {
                 if (strings[i + 2] != string.Empty)
                 {//by Standart, can be missing value. In that case by default=0
-                    this.analogs[i] = Convert.ToDouble(strings[i + 2], System.Globalization.CultureInfo.InvariantCulture);
+                    this.AnalogValues[i] = Convert.ToDouble(strings[i + 2], System.Globalization.CultureInfo.InvariantCulture);
                 }
             }
 
             for (int i = 0; i < digitalCount; i++)
             {
-                this.digitals[i] = Convert.ToBoolean(Convert.ToInt32(strings[i + 2 + analogCount]));
+                this.DigitalValues[i] = Convert.ToBoolean(Convert.ToInt32(strings[i + 2 + analogCount]));
             }
         }
 
         public DataFileSample(byte[] bytes, DataFileType dataFileType, int analogCount, int digitalCount)
         {
-            this.analogs = new double[analogCount];
-            this.digitals = new bool[digitalCount];
+            this.AnalogValues = new double[analogCount];
+            this.DigitalValues = new bool[digitalCount];
 
-            this.number = System.BitConverter.ToInt32(bytes, 0);
-            this.timestamp = System.BitConverter.ToInt32(bytes, 4);
+            this.Number = System.BitConverter.ToInt32(bytes, 0);
+            this.Timestamp = System.BitConverter.ToInt32(bytes, 4);
 
             int digitalByteStart;
             if (dataFileType == DataFileType.Binary)
             {
                 for (int i = 0; i < analogCount; i++)
                 {
-                    this.analogs[i] = System.BitConverter.ToInt16(bytes, 8 + i * 2);
+                    this.AnalogValues[i] = System.BitConverter.ToInt16(bytes, 8 + i * 2);
                 }
                 digitalByteStart = 8 + 2 * analogCount;
             }
@@ -74,14 +75,14 @@ namespace ComtradeHandler.Core
                 {
                     for (int i = 0; i < analogCount; i++)
                     {//TODO добавить тест				
-                        this.analogs[i] = System.BitConverter.ToInt32(bytes, 8 + i * 4);
+                        this.AnalogValues[i] = System.BitConverter.ToInt32(bytes, 8 + i * 4);
                     }
                 }
                 else if (dataFileType == DataFileType.Float32)
                 {
                     for (int i = 0; i < analogCount; i++)
                     {//TODO добавить тест				
-                        this.analogs[i] = System.BitConverter.ToSingle(bytes, 8 + i * 4);
+                        this.AnalogValues[i] = System.BitConverter.ToSingle(bytes, 8 + i * 4);
                     }
                 }
 
@@ -92,24 +93,24 @@ namespace ComtradeHandler.Core
             for (int i = 0; i < digitalCount; i++)
             {
                 int digitalByteIterator = i / 8;
-                this.digitals[i] = Convert.ToBoolean((bytes[digitalByteStart + digitalByteIterator] >> (i - digitalByteIterator * 8)) & 1);
+                this.DigitalValues[i] = Convert.ToBoolean((bytes[digitalByteStart + digitalByteIterator] >> (i - digitalByteIterator * 8)) & 1);
             }
         }
 
         public string ToASCIIDAT()
         {
             string result = string.Empty;
-            result += this.number.ToString();
-            result += GlobalSettings.commaDelimiter +
-                this.timestamp.ToString();
-            foreach (var analog in this.analogs)
+            result += this.Number.ToString();
+            result += GlobalSettings.Comma +
+                this.Timestamp.ToString();
+            foreach (var analog in this.AnalogValues)
             {
-                result += GlobalSettings.commaDelimiter +
+                result += GlobalSettings.Comma +
                     analog.ToString(System.Globalization.CultureInfo.InvariantCulture);
             }
-            foreach (var digital in this.digitals)
+            foreach (var digital in this.DigitalValues)
             {
-                result += GlobalSettings.commaDelimiter +
+                result += GlobalSettings.Comma +
                     System.Convert.ToInt32(digital).ToString(System.Globalization.CultureInfo.InvariantCulture);
             }
 
@@ -119,12 +120,12 @@ namespace ComtradeHandler.Core
 
         public byte[] ToByteDAT(DataFileType dataFileType, IReadOnlyList<AnalogChannelInformation> analogInformations)
         {
-            var result = new byte[DataFileHandler.GetByteCount(this.analogs.Length, this.digitals.Length, dataFileType)];
+            var result = new byte[DataFileHandler.GetByteCount(this.AnalogValues.Length, this.DigitalValues.Length, dataFileType)];
             int analogOneChannelLength = dataFileType == DataFileType.Binary ? 2 : 4;
-            int digitalByteStart = 8 + analogOneChannelLength * this.analogs.Length;
+            int digitalByteStart = 8 + analogOneChannelLength * this.AnalogValues.Length;
 
-            System.BitConverter.GetBytes(this.number).CopyTo(result, 0);
-            System.BitConverter.GetBytes(this.timestamp).CopyTo(result, 4);
+            System.BitConverter.GetBytes(this.Number).CopyTo(result, 0);
+            System.BitConverter.GetBytes(this.Timestamp).CopyTo(result, 4);
 
             switch (dataFileType)
             {
@@ -147,27 +148,27 @@ namespace ComtradeHandler.Core
 
         void AnalogsToBinaryDAT(byte[] result, IReadOnlyList<AnalogChannelInformation> analogInformations)
         {
-            for (int i = 0; i < this.analogs.Length; i++)
+            for (int i = 0; i < this.AnalogValues.Length; i++)
             {
-                short s = (short)((this.analogs[i] - analogInformations[i].b) / analogInformations[i].a);
+                short s = (short)((this.AnalogValues[i] - analogInformations[i].b) / analogInformations[i].a);
                 System.BitConverter.GetBytes(s).CopyTo(result, 8 + i * 2);
             }
         }
 
         void AnalogsToBinary32DAT(byte[] result, IReadOnlyList<AnalogChannelInformation> analogInformations)
         {
-            for (int i = 0; i < this.analogs.Length; i++)
+            for (int i = 0; i < this.AnalogValues.Length; i++)
             {
-                int s = (int)((this.analogs[i] - analogInformations[i].b) / analogInformations[i].a);
+                int s = (int)((this.AnalogValues[i] - analogInformations[i].b) / analogInformations[i].a);
                 System.BitConverter.GetBytes(s).CopyTo(result, 8 + i * 4);
             }
         }
 
         void AnalogsToFloat32DAT(byte[] result)
         {
-            for (int i = 0; i < this.analogs.Length; i++)
+            for (int i = 0; i < this.AnalogValues.Length; i++)
             {
-                System.BitConverter.GetBytes((float)this.analogs[i]).CopyTo(result, 8 + i * 4);
+                System.BitConverter.GetBytes((float)this.AnalogValues[i]).CopyTo(result, 8 + i * 4);
             }
         }
 
@@ -175,11 +176,11 @@ namespace ComtradeHandler.Core
         {
             int byteIndex = 0;
             byte s = 0;
-            for (int i = 0; i < this.digitals.Length; i++)
+            for (int i = 0; i < this.DigitalValues.Length; i++)
             {
-                s = (byte)(System.Convert.ToInt32(s) | (System.Convert.ToInt32(this.digitals[i]) << (i - byteIndex * 8)));
+                s = (byte)(System.Convert.ToInt32(s) | (System.Convert.ToInt32(this.DigitalValues[i]) << (i - byteIndex * 8)));
 
-                if ((i + 1) % 8 == 0 || (i + 1) == this.digitals.Length)
+                if ((i + 1) % 8 == 0 || (i + 1) == this.DigitalValues.Length)
                 {
                     result[digitalByteStart + byteIndex] = s;
                     s = 0;

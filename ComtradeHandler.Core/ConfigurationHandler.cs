@@ -9,66 +9,55 @@ namespace ComtradeHandler.Core
     public class ConfigurationHandler
     {
         //first line
-        /// <summary>
-        /// According STD for COMTRADE
-        /// </summary>
-        public string stationName = string.Empty;
-        /// <summary>
-        /// According STD for COMTRADE
-        /// </summary>
-        public string deviceId = string.Empty;
 
-        public ComtradeVersion version = ComtradeVersion.V1991;//if not presented suppose that v1991
+        /// <summary>
+        /// According STD for COMTRADE
+        /// </summary>
+        public string StationName { get; set; }
+
+        /// <summary>
+        /// According STD for COMTRADE
+        /// </summary>
+        public string DeviceId { get; set; }
+
+        public ComtradeVersion Version { get; set; } = ComtradeVersion.V1991;
 
         //second line
-        public int analogChannelsCount = 0;
-        public int digitalChannelsCount = 0;
-
-
-        List<AnalogChannelInformation> analogChannelInformations;
+        public int AnalogChannelsCount { get; set; }
+        public int DigitalChannelsCount { get; set; }
+        private List<AnalogChannelInformation> _analogChannelInformationList;
         /// <summary>
-        /// List of analog channel informations
+        /// List of analog channel information
         /// </summary>
-        public IReadOnlyList<AnalogChannelInformation> AnalogChannelInformations
-        {
-            get
-            {
-                return this.analogChannelInformations;
-            }
-        }
+        public IReadOnlyList<AnalogChannelInformation> AnalogChannelInformationList => this._analogChannelInformationList;
 
-        List<DigitalChannelInformation> digitalChannelInformations;
+        List<DigitalChannelInformation> _digitalChannelInformationList;
         /// <summary>
-        /// List of digital channel informations
+        /// List of digital channel information
         /// </summary>
-        public IReadOnlyList<DigitalChannelInformation> DigitalChannelInformations
-        {
-            get
-            {
-                return this.digitalChannelInformations;
-            }
-        }
+        public IReadOnlyList<DigitalChannelInformation> DigitalChannelInformationList => this._digitalChannelInformationList;
+
         /// <summary>
         /// According STD for COMTRADE
         /// </summary>
-        public double frequency = 50.0;
+        public double Frequency { get; set; } = 50.0;
 
-        public int samplingRateCount = 0;
-        public List<SampleRate> sampleRates;
+        public int SamplingRateCount { get; set; } 
+        public List<SampleRate> SampleRates;
 
         /// <summary>
         /// Time of first value in data
         /// </summary>
-        public DateTime startTime { get; private set; }
+        public DateTime StartTime { get; private set; }
 
         /// <summary>
         /// Time of trigger point
         /// </summary>
-        public DateTime triggerTime { get; private set; }
+        public DateTime TriggerTime { get; private set; }
 
-        public DataFileType dataFileType = DataFileType.Undefined;
+        public DataFileType DataFileType = DataFileType.Undefined;
 
-        internal double timeMultiplicationFactor = 1.0;
+        internal double TimeMultiplicationFactor = 1.0;
 
         public ConfigurationHandler()//для тестов
         {
@@ -85,42 +74,42 @@ namespace ComtradeHandler.Core
             this.ParseFirstLine(strings[0]);
             this.ParseSecondLine(strings[1]);
 
-            this.analogChannelInformations = new List<AnalogChannelInformation>();
-            for (int i = 0; i < this.analogChannelsCount; i++)
+            this._analogChannelInformationList = new List<AnalogChannelInformation>();
+            for (int i = 0; i < this.AnalogChannelsCount; i++)
             {
-                this.analogChannelInformations.Add(new AnalogChannelInformation(strings[2 + i]));
+                this._analogChannelInformationList.Add(new AnalogChannelInformation(strings[2 + i]));
             }
 
-            this.digitalChannelInformations = new List<DigitalChannelInformation>();
-            for (int i = 0; i < this.digitalChannelsCount; i++)
+            this._digitalChannelInformationList = new List<DigitalChannelInformation>();
+            for (int i = 0; i < this.DigitalChannelsCount; i++)
             {
-                this.digitalChannelInformations.Add(new DigitalChannelInformation(strings[2 + i + this.analogChannelsCount]));
+                this._digitalChannelInformationList.Add(new DigitalChannelInformation(strings[2 + i + this.AnalogChannelsCount]));
             }
 
-            var strIndex = 2 + this.analogChannelsCount + this.digitalChannelsCount;
-            this.ParseFrequenceLine(strings[strIndex++]);
+            var strIndex = 2 + this.AnalogChannelsCount + this.DigitalChannelsCount;
+            this.ParseFrequencyLine(strings[strIndex++]);
             //strIndex++;
 
             this.ParseNumberOfSampleRates(strings[strIndex++]);
             //strIndex++;
 
-            this.sampleRates = new List<SampleRate>();
-            if (this.samplingRateCount == 0)
+            this.SampleRates = new List<SampleRate>();
+            if (this.SamplingRateCount == 0)
             {
-                this.sampleRates.Add(new SampleRate(strings[strIndex++]));
+                this.SampleRates.Add(new SampleRate(strings[strIndex++]));
                 //strIndex++;
             }
             else
             {
-                for (int i = 0; i < this.samplingRateCount; i++)
+                for (var i = 0; i < this.SamplingRateCount; i++)
                 {
-                    this.sampleRates.Add(new SampleRate(strings[strIndex + i]));
+                    this.SampleRates.Add(new SampleRate(strings[strIndex + i]));
                 }
-                strIndex += this.samplingRateCount;
+                strIndex += this.SamplingRateCount;
             }
 
-            this.startTime = ParseDateTime(strings[strIndex++]);
-            this.triggerTime = ParseDateTime(strings[strIndex++]);
+            this.StartTime = ParseDateTime(strings[strIndex++]);
+            this.TriggerTime = ParseDateTime(strings[strIndex++]);
 
             this.ParseDataFileType(strings[strIndex++]);
 
@@ -131,39 +120,39 @@ namespace ComtradeHandler.Core
 
         void ParseFirstLine(string firstLine)
         {
-            firstLine = firstLine.Replace(GlobalSettings.whiteSpace.ToString(), string.Empty);
-            var values = firstLine.Split(GlobalSettings.commaDelimiter);
-            this.stationName = values[0];
-            this.deviceId = values[1];
+            firstLine = firstLine.Replace(GlobalSettings.WhiteSpace.ToString(), string.Empty);
+            var values = firstLine.Split(GlobalSettings.Comma);
+            this.StationName = values[0];
+            this.DeviceId = values[1];
             if (values.Length == 3)
             {
-                this.version = ComtradeVersionConverter.Get(values[2]);
+                this.Version = ComtradeVersionConverter.Get(values[2]);
             }
         }
 
         void ParseSecondLine(string secondLine)
         {
-            secondLine = secondLine.Replace(GlobalSettings.whiteSpace.ToString(), string.Empty);
-            var values = secondLine.Split(GlobalSettings.commaDelimiter);
+            secondLine = secondLine.Replace(GlobalSettings.WhiteSpace.ToString(), string.Empty);
+            var values = secondLine.Split(GlobalSettings.Comma);
             //values[0];//не используется, равен сумме двух последующих
-            this.analogChannelsCount = Convert.ToInt32(values[1].TrimEnd('A'), System.Globalization.CultureInfo.InvariantCulture);
-            this.digitalChannelsCount = Convert.ToInt32(values[2].TrimEnd('D'), System.Globalization.CultureInfo.InvariantCulture);
+            this.AnalogChannelsCount = Convert.ToInt32(values[1].TrimEnd('A'), System.Globalization.CultureInfo.InvariantCulture);
+            this.DigitalChannelsCount = Convert.ToInt32(values[2].TrimEnd('D'), System.Globalization.CultureInfo.InvariantCulture);
         }
 
-        void ParseFrequenceLine(string frequenceLine)
+        void ParseFrequencyLine(string frequenceLine)
         {
-            this.frequency = Convert.ToDouble(frequenceLine.Trim(GlobalSettings.whiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+            this.Frequency = Convert.ToDouble(frequenceLine.Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
         }
 
         void ParseNumberOfSampleRates(string str)
         {
-            this.samplingRateCount = Convert.ToInt32(str.Trim(GlobalSettings.whiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+            this.SamplingRateCount = Convert.ToInt32(str.Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
         }
 
         internal static DateTime ParseDateTime(string str)
         {   // "dd/mm/yyyy,hh:mm:ss.ssssss"
             DateTime result;
-            DateTime.TryParseExact(str, GlobalSettings.dateTimeFormat,
+            DateTime.TryParseExact(str, GlobalSettings.DateTimeFormat,
                                    System.Globalization.CultureInfo.InvariantCulture,
                                    System.Globalization.DateTimeStyles.AllowWhiteSpaces,
                                    out result);
@@ -172,12 +161,12 @@ namespace ComtradeHandler.Core
 
         void ParseDataFileType(string str)
         {
-            this.dataFileType = DataFileTypeConverter.Get(str.Trim(GlobalSettings.whiteSpace));
+            this.DataFileType = DataFileTypeConverter.Get(str.Trim(GlobalSettings.WhiteSpace));
         }
 
         void ParseTimeMultiplicationFactor(string str)
         {
-            this.timeMultiplicationFactor = Convert.ToDouble(str.Trim(GlobalSettings.whiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+            this.TimeMultiplicationFactor = Convert.ToDouble(str.Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
         }
     }
 }

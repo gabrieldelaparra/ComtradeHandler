@@ -73,16 +73,16 @@ namespace ComtradeHandler.UnitTests
                     true
                 });
 
-            writer.startTime = new DateTime(1234567890);
-            writer.triggerTime = new DateTime(1234569000);
+            writer.StartTime = new DateTime(1234567890);
+            writer.TriggerTime = new DateTime(1234569000);
             return writer;
         }
 
         private void ReaderAsserts(string fullpath)
         {
             var reader = new RecordReader(fullpath);
-            Assert.That(reader.Configuration.AnalogChannelInformations.Count, Is.EqualTo(3));
-            Assert.That(reader.Configuration.DigitalChannelInformations.Count, Is.EqualTo(17));
+            Assert.That(reader.Configuration.AnalogChannelInformationList.Count, Is.EqualTo(3));
+            Assert.That(reader.Configuration.DigitalChannelInformationList.Count, Is.EqualTo(17));
 
             var timeLine = reader.GetTimeLine();
             var analogs1 = reader.GetAnalogPrimaryChannel(0);
@@ -121,8 +121,8 @@ namespace ComtradeHandler.UnitTests
             Assert.That(digitals17[1], Is.EqualTo(false));
             Assert.That(digitals17[2], Is.EqualTo(true));
 
-            Assert.That(reader.Configuration.startTime, Is.EqualTo(new DateTime(1234567890)));
-            Assert.That(reader.Configuration.triggerTime, Is.EqualTo(new DateTime(1234569000)));
+            Assert.That(reader.Configuration.StartTime, Is.EqualTo(new DateTime(1234567890)));
+            Assert.That(reader.Configuration.TriggerTime, Is.EqualTo(new DateTime(1234569000)));
         }
 
         [Test]

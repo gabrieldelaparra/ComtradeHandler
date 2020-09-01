@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 
 namespace ComtradeHandler.Core
 {
@@ -8,72 +7,63 @@ namespace ComtradeHandler.Core
     /// </summary>
     public class DigitalChannelInformation
     {
-
-        int index = 0;
-
         /// <summary>
         /// According STD for COMTRADE
         /// </summary>
-        public int Index
-        {
-            get
-            {
-                return index;
-            }
-            internal set
-            {
-                index = value;
-            }
-        }
+        public int Index { get; internal set; }
 
         /// <summary>
         /// According STD for COMTRADE
         /// </summary>
-        public readonly string name = string.Empty;
+        public string Name { get; }
+
         /// <summary>
         /// According STD for COMTRADE
         /// </summary>
-        public readonly string phase = string.Empty;
+        public string Phase { get; }
+
         /// <summary>
         /// According STD for COMTRADE
         /// </summary>
-        public readonly string circuitComponent = string.Empty;
+        public string CircuitComponent { get; }
+
         /// <summary>
         /// According STD for COMTRADE
         /// </summary>
-        public readonly bool normalState = false;
+        public bool NormalState { get; }
 
         /// <summary>
         /// Constructor
         /// </summary>
         public DigitalChannelInformation(string name, string phase)
         {
-            this.name = name;
-            this.phase = phase;
+            this.Name = name;
+            this.Phase = phase;
         }
 
         public DigitalChannelInformation(string digitalLine)
         {
-            var values = digitalLine.Split(GlobalSettings.commaDelimiter);
+            var values = digitalLine.Split(GlobalSettings.Comma);
 
-            this.index = Convert.ToInt32(values[0].Trim(GlobalSettings.whiteSpace), System.Globalization.CultureInfo.InvariantCulture);
-            this.name = values[1].Trim(GlobalSettings.whiteSpace);
-            this.phase = values[2].Trim(GlobalSettings.whiteSpace);
-            this.circuitComponent = values[3].Trim(GlobalSettings.whiteSpace);
+            this.Index = Convert.ToInt32(values[0].Trim(GlobalSettings.WhiteSpace), System.Globalization.CultureInfo.InvariantCulture);
+            this.Name = values[1].Trim(GlobalSettings.WhiteSpace);
+            this.Phase = values[2].Trim(GlobalSettings.WhiteSpace);
+            this.CircuitComponent = values[3].Trim(GlobalSettings.WhiteSpace);
             if (values.Length > 4)
             {//some files not include this part of line
-                this.normalState = Convert.ToBoolean(Convert.ToInt32(values[4].Trim(GlobalSettings.whiteSpace),
+                this.NormalState = Convert.ToBoolean(Convert.ToInt32(values[4].Trim(GlobalSettings.WhiteSpace),
                                                                    System.Globalization.CultureInfo.InvariantCulture));
             }
         }
 
         internal string ToCFGString()
         {
-            return this.Index.ToString() + GlobalSettings.commaDelimiter +
-                    this.name + GlobalSettings.commaDelimiter +
-                    this.phase + GlobalSettings.commaDelimiter +
-                    this.circuitComponent + GlobalSettings.commaDelimiter +
-                    (this.normalState ? "1" : "0");
+            return string.Join(GlobalSettings.Comma.ToString(), 
+                Index.ToString(), 
+                Name,
+                Phase, 
+                CircuitComponent, 
+                NormalState ? "1" : "0");
         }
     }
 }
