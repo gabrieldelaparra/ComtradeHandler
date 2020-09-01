@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ComtradeHandler.Core\ComtradeHandler.Core.csproj" />
+    <ProjectReference Include="..\ComtradeHandler.Core\Comtrade.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComtradeHandler.Core", "ComtradeHandler.Core\ComtradeHandler.Core.csproj", "{4E158935-54DB-46CC-AF10-864A6C04F6A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comtrade.Core", "ComtradeHandler.Core\Comtrade.Core.csproj", "{4E158935-54DB-46CC-AF10-864A6C04F6A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComtradeHandler.UnitTests", "ComtradeHandler.UnitTests\ComtradeHandler.UnitTests.csproj", "{9B43EFDD-8674-4639-8BE2-D4E872CE6EDB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comtrade.UnitTests", "ComtradeHandler.UnitTests\Comtrade.UnitTests.csproj", "{9B43EFDD-8674-4639-8BE2-D4E872CE6EDB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
