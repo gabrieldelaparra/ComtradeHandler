@@ -22,6 +22,14 @@
         <RepositoryUrl>https://github.com/gabrieldelaparra/ComtradeHandler</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <AssemblyName>ComtradeHandler</AssemblyName>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Include="..\README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
 
 </Project>
