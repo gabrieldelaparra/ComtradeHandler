@@ -1,7 +1,7 @@
-﻿using Comtrade.Core;
+﻿using ComtradeHandler.Core;
 using Xunit;
 
-namespace Comtrade.UnitTests;
+namespace ComtradeHandler.UnitTests;
 
 public class DataFileHandlerTest
 {

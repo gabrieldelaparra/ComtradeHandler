@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace Comtrade.Core;
+namespace ComtradeHandler.Core;
 
 /// <summary>
 ///     Description of SampleRate.

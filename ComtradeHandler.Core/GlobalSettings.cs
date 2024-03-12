@@ -1,4 +1,4 @@
-﻿namespace Comtrade.Core;
+﻿namespace ComtradeHandler.Core;
 
 /// <summary>
 ///     Description of GlobalSettings.

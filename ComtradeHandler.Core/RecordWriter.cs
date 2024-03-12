@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Comtrade.Core;
+namespace ComtradeHandler.Core;
 
 /// <summary>
 ///     For creating COMTRADE files

@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace Comtrade.Core;
+namespace ComtradeHandler.Core;
 
 /// <summary>
 ///     Working with *.cfg

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Comtrade.Core;
+namespace ComtradeHandler.Core;
 
 /// <summary>
 ///     Description of DataFileHandler.

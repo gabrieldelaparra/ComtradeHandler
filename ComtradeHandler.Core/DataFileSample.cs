@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Comtrade.Core;
+namespace ComtradeHandler.Core;
 
 /// <summary>
 /// </summary>

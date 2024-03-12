@@ -1,4 +1,4 @@
-﻿namespace Comtrade.Core;
+﻿namespace ComtradeHandler.Core;
 
 /// <summary>
 ///     Data file type
