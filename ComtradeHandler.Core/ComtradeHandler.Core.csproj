@@ -1,9 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
+		<BasedOnWispComtradeVersion>0.9.5</BasedOnWispComtradeVersion>
+		<Version>0.9.5</Version>
     </PropertyGroup>
 
 </Project>
