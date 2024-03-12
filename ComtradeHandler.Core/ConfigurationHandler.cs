@@ -80,12 +80,16 @@ namespace Comtrade.Core
             ParseSecondLine(strings[1]);
 
             _analogChannelInformationList = new List<AnalogChannelInformation>();
-            for (var i = 0; i < AnalogChannelsCount; i++)
+
+            for (var i = 0; i < AnalogChannelsCount; i++) {
                 _analogChannelInformationList.Add(new AnalogChannelInformation(strings[2 + i]));
+            }
 
             _digitalChannelInformationList = new List<DigitalChannelInformation>();
-            for (var i = 0; i < DigitalChannelsCount; i++)
+
+            for (var i = 0; i < DigitalChannelsCount; i++) {
                 _digitalChannelInformationList.Add(new DigitalChannelInformation(strings[2 + i + AnalogChannelsCount]));
+            }
 
             var strIndex = 2 + AnalogChannelsCount + DigitalChannelsCount;
             ParseFrequencyLine(strings[strIndex++]);
@@ -95,14 +99,16 @@ namespace Comtrade.Core
             //strIndex++;
 
             SampleRates = new List<SampleRate>();
-            if (SamplingRateCount == 0)
-            {
+
+            if (SamplingRateCount == 0) {
                 SampleRates.Add(new SampleRate(strings[strIndex++]));
                 //strIndex++;
             }
-            else
-            {
-                for (var i = 0; i < SamplingRateCount; i++) SampleRates.Add(new SampleRate(strings[strIndex + i]));
+            else {
+                for (var i = 0; i < SamplingRateCount; i++) {
+                    SampleRates.Add(new SampleRate(strings[strIndex + i]));
+                }
+
                 strIndex += SamplingRateCount;
             }
 
@@ -148,9 +154,10 @@ namespace Comtrade.Core
         {
             // "dd/mm/yyyy,hh:mm:ss.ssssss"
             DateTime.TryParseExact(str, GlobalSettings.DateTimeFormat,
-                CultureInfo.InvariantCulture,
-                DateTimeStyles.AllowWhiteSpaces,
-                out var result);
+                                   CultureInfo.InvariantCulture,
+                                   DateTimeStyles.AllowWhiteSpaces,
+                                   out var result);
+
             return result;
         }
 

@@ -24,6 +24,7 @@ public class ConfigurationHandlerTest
 BINARY
 1.00
 ";
+
         var strings = str.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
         var configHandler = new ConfigurationHandler();
         configHandler.Parse(strings);

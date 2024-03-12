@@ -20,30 +20,33 @@ namespace Comtrade.Core
 
             if (configuration.DataFileType == DataFileType.Binary ||
                 configuration.DataFileType == DataFileType.Binary32 ||
-                configuration.DataFileType == DataFileType.Float32)
-            {
+                configuration.DataFileType == DataFileType.Float32) {
                 var fileContent = File.ReadAllBytes(fullPathToFileDAT);
 
                 var oneSampleLength = GetByteCount(configuration.AnalogChannelsCount,
-                    configuration.DigitalChannelsCount,
-                    configuration.DataFileType);
+                                                   configuration.DigitalChannelsCount,
+                                                   configuration.DataFileType);
 
-                for (var i = 0; i < samplesCount; i++)
-                {
+                for (var i = 0; i < samplesCount; i++) {
                     var bytes = new byte[oneSampleLength];
-                    for (var j = 0; j < oneSampleLength; j++) bytes[j] = fileContent[i * oneSampleLength + j];
+
+                    for (var j = 0; j < oneSampleLength; j++) {
+                        bytes[j] = fileContent[i * oneSampleLength + j];
+                    }
+
                     Samples[i] = new DataFileSample(bytes, configuration.DataFileType,
-                        configuration.AnalogChannelsCount, configuration.DigitalChannelsCount);
+                                                    configuration.AnalogChannelsCount, configuration.DigitalChannelsCount);
                 }
             }
-            else if (configuration.DataFileType == DataFileType.ASCII)
-            {
+            else if (configuration.DataFileType == DataFileType.ASCII) {
                 var strings = File.ReadAllLines(fullPathToFileDAT);
                 //removing empty strings (when *.dat file not following Standard)
                 strings = strings.Where(x => x != string.Empty).ToArray();
-                for (var i = 0; i < samplesCount; i++)
+
+                for (var i = 0; i < samplesCount; i++) {
                     Samples[i] = new DataFileSample(strings[i],
-                        configuration.AnalogChannelsCount, configuration.DigitalChannelsCount);
+                                                    configuration.AnalogChannelsCount, configuration.DigitalChannelsCount);
+                }
             }
         }
 
@@ -56,6 +59,7 @@ namespace Comtrade.Core
         public static int GetByteCount(int analogsChannelsCount, int digitalChannelsCount, DataFileType dataFileType)
         {
             var analogOneChannelLength = dataFileType == DataFileType.Binary ? 2 : 4;
+
             return SampleNumberLength +
                    TimeStampLength +
                    analogsChannelsCount * analogOneChannelLength +

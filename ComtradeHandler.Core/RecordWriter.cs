@@ -47,10 +47,13 @@ namespace Comtrade.Core
             DeviceId = reader.Configuration.DeviceId;
 
             sampleList = new List<DataFileSample>(reader.Data.Samples);
+
             analogChannelInformationList =
                 new List<AnalogChannelInformation>(reader.Configuration.AnalogChannelInformationList);
+
             digitalChannelInformationList =
                 new List<DigitalChannelInformation>(reader.Configuration.DigitalChannelInformationList);
+
             sampleRateList = new List<SampleRate>(reader.Configuration.SampleRates);
 
             StartTime = reader.Configuration.StartTime;
@@ -93,13 +96,15 @@ namespace Comtrade.Core
             if (analogs == null) notNullAnalogs = new double[0];
             if (digitals == null) notNullDigitals = new bool[0];
 
-            if (analogChannelInformationList.Count != notNullAnalogs.Length)
+            if (analogChannelInformationList.Count != notNullAnalogs.Length) {
                 throw new InvalidOperationException(
                     $"Analog count ({notNullAnalogs.Length}) must be equal to channels count ({analogChannelInformationList.Count})");
+            }
 
-            if (digitalChannelInformationList.Count != notNullDigitals.Length)
+            if (digitalChannelInformationList.Count != notNullDigitals.Length) {
                 throw new InvalidOperationException(
                     $"Digital count ({notNullDigitals.Length}) must be equal to channels count ({digitalChannelInformationList.Count})");
+            }
 
             sampleList.Add(new DataFileSample(sampleList.Count + 1, timestamp, notNullAnalogs, notNullDigitals));
         }
@@ -111,8 +116,9 @@ namespace Comtrade.Core
         {
             if (dataFileType == DataFileType.Undefined ||
                 dataFileType == DataFileType.Binary32 ||
-                dataFileType == DataFileType.Float32)
+                dataFileType == DataFileType.Float32) {
                 throw new InvalidOperationException("Currently unsupported " + dataFileType);
+            }
 
 
             var path = Path.GetDirectoryName(fullPathToFile);
@@ -132,36 +138,38 @@ namespace Comtrade.Core
                         analogChannelInformationList.Count + "A" + GlobalSettings.Comma +
                         digitalChannelInformationList.Count + "D");
 
-            for (var i = 0; i < analogChannelInformationList.Count; i++)
+            for (var i = 0; i < analogChannelInformationList.Count; i++) {
                 strings.Add(analogChannelInformationList[i].ToCFGString());
+            }
 
-            for (var i = 0; i < digitalChannelInformationList.Count; i++)
+            for (var i = 0; i < digitalChannelInformationList.Count; i++) {
                 strings.Add(digitalChannelInformationList[i].ToCFGString());
+            }
 
             strings.Add("50.0");
 
-            if (sampleRateList == null || sampleRateList.Count == 0)
-            {
+            if (sampleRateList == null || sampleRateList.Count == 0) {
                 strings.Add("0");
+
                 strings.Add("0" + GlobalSettings.Comma +
                             sampleList.Count);
             }
-            else
-            {
+            else {
                 strings.Add(sampleRateList.Count.ToString());
-                foreach (var sampleRate in sampleRateList)
+
+                foreach (var sampleRate in sampleRateList) {
                     strings.Add(sampleRate.SamplingFrequency.ToString() + GlobalSettings.Comma +
                                 sampleRate.LastSampleNumber);
+                }
             }
 
             strings.Add(StartTime.ToString(GlobalSettings.DateTimeFormat,
-                CultureInfo.InvariantCulture));
+                                           CultureInfo.InvariantCulture));
 
             strings.Add(TriggerTime.ToString(GlobalSettings.DateTimeFormat,
-                CultureInfo.InvariantCulture));
+                                             CultureInfo.InvariantCulture));
 
-            switch (dataFileType)
-            {
+            switch (dataFileType) {
                 case DataFileType.ASCII:
                     strings.Add("ASCII");
                     break;
@@ -185,17 +193,22 @@ namespace Comtrade.Core
             //DAT part
             var dataFileFullPath = Path.Combine(path, fileNameWithoutExtension) + GlobalSettings.ExtensionDAT;
 
-            if (dataFileType == DataFileType.ASCII)
-            {
+            if (dataFileType == DataFileType.ASCII) {
                 strings = new List<string>();
-                foreach (var sample in sampleList) strings.Add(sample.ToASCIIDAT());
+
+                foreach (var sample in sampleList) {
+                    strings.Add(sample.ToASCIIDAT());
+                }
+
                 File.WriteAllLines(dataFileFullPath, strings);
             }
-            else
-            {
+            else {
                 var bytes = new List<byte>();
-                foreach (var sample in sampleList)
+
+                foreach (var sample in sampleList) {
                     bytes.AddRange(sample.ToByteDAT(dataFileType, analogChannelInformationList));
+                }
+
                 File.WriteAllBytes(dataFileFullPath, bytes.ToArray());
             }
         }
@@ -205,8 +218,8 @@ namespace Comtrade.Core
             if (dataFileType == DataFileType.Binary ||
                 dataFileType == DataFileType.Binary32)
                 //i make it same, but in theory, bin32 can be more precise
-                for (var i = 0; i < analogChannelInformationList.Count; i++)
-                {
+            {
+                for (var i = 0; i < analogChannelInformationList.Count; i++) {
                     var min = sampleList.Min(x => x.AnalogValues[i]);
                     var max = sampleList.Max(x => x.AnalogValues[i]);
                     analogChannelInformationList[i].MultiplierB = (max + min) / 2.0;
@@ -214,12 +227,13 @@ namespace Comtrade.Core
                     analogChannelInformationList[i].Min = -32767; //by standart 1999
                     analogChannelInformationList[i].Max = 32767; //by standart 1999
                 }
-            else if (dataFileType == DataFileType.ASCII)
-                foreach (var analogChannelInformation in analogChannelInformationList)
-                {
+            }
+            else if (dataFileType == DataFileType.ASCII) {
+                foreach (var analogChannelInformation in analogChannelInformationList) {
                     analogChannelInformation.Min = -32767; //by standart 1999
                     analogChannelInformation.Max = 32767; //by standart 1999
                 }
+            }
         }
     }
 }

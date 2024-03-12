@@ -133,8 +133,7 @@ namespace Comtrade.Core
 
         internal string ToCFGString()
         {
-            var cfgValues = new[]
-            {
+            var cfgValues = new[] {
                 Index.ToString(),
                 Name,
                 Phase,
@@ -149,6 +148,7 @@ namespace Comtrade.Core
                 Secondary.ToString(CultureInfo.InvariantCulture),
                 IsPrimary ? "P" : "S"
             };
+
             return string.Join(GlobalSettings.Comma.ToString(), cfgValues);
         }
     }

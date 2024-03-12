@@ -33,8 +33,7 @@ public class DataFileSampleTest
     [Fact]
     public void CommonBinaryReadingTest()
     {
-        byte[] bytes =
-        {
+        byte[] bytes = {
             0x05, 0x00, 0x50, 0x00,
             0x9B, 0x02, 0x00, 0x00,
             0x08, 0xFD,
@@ -69,8 +68,7 @@ public class DataFileSampleTest
     [Fact]
     public void CommonBinaryWritingTest()
     {
-        byte[] bytes =
-        {
+        byte[] bytes = {
             0x05, 0x00, 0x50, 0x00,
             0x9B, 0x02, 0x00, 0x00,
             0x08, 0xFD,
@@ -94,14 +92,15 @@ public class DataFileSampleTest
 
         var result = sample.ToByteDAT(DataFileType.Binary, analogInformations);
 
-        for (var i = 0; i < bytes.Length; i++) Assert.Equal(bytes[i], result[i]);
+        for (var i = 0; i < bytes.Length; i++) {
+            Assert.Equal(bytes[i], result[i]);
+        }
     }
 
     [Fact]
     public void DigitalOnlyBinaryReadingTest()
     {
-        byte[] bytes =
-        {
+        byte[] bytes = {
             0x05, 0x00, 0x00, 0x00,
             0x9B, 0x02, 0x00, 0x00,
             0x0F, 0x0F,

@@ -25,9 +25,12 @@ namespace Comtrade.Core
             Name = values[1].Trim();
             Phase = values[2].Trim();
             CircuitComponent = values[3].Trim();
+
             if (values.Length > 4)
                 //some files not include this part of line
+            {
                 NormalState = Convert.ToBoolean(Convert.ToInt32(values[4].Trim(), CultureInfo.InvariantCulture));
+            }
         }
 
         /// <summary>
@@ -68,11 +71,11 @@ namespace Comtrade.Core
         internal string ToCFGString()
         {
             return string.Join(GlobalSettings.Comma.ToString(),
-                Index.ToString(),
-                Name,
-                Phase,
-                CircuitComponent,
-                NormalState ? "1" : "0");
+                               Index.ToString(),
+                               Name,
+                               Phase,
+                               CircuitComponent,
+                               NormalState ? "1" : "0");
         }
     }
 }

@@ -36,19 +36,16 @@ namespace Comtrade.Core
             var filenameWithoutExtention = Path.GetFileNameWithoutExtension(fullPathToFile);
             var extention = Path.GetExtension(fullPathToFile).ToLower();
 
-            if (extention == GlobalSettings.ExtensionCFF)
-            {
+            if (extention == GlobalSettings.ExtensionCFF) {
                 //TODO доделать cff
                 throw new NotImplementedException("*.cff not supported");
             }
 
-            if (extention == GlobalSettings.ExtensionCFG || extention == GlobalSettings.ExtensionDAT)
-            {
+            if (extention == GlobalSettings.ExtensionCFG || extention == GlobalSettings.ExtensionDAT) {
                 Configuration = new ConfigurationHandler(Path.Combine(path, filenameWithoutExtention + ".cfg"));
                 Data = new DataFileHandler(Path.Combine(path, filenameWithoutExtention + ".dat"), Configuration);
             }
-            else
-            {
+            else {
                 throw new InvalidOperationException("Unsupported file extentions. Must be *.cfg, *.dat, *.cff");
             }
         }
@@ -62,20 +59,19 @@ namespace Comtrade.Core
             var list = new double[Data.Samples.Length];
 
             if (Configuration.SamplingRateCount == 0 ||
-                Math.Abs(Configuration.SampleRates[0].SamplingFrequency) < 0.01d)
-            {
+                Math.Abs(Configuration.SampleRates[0].SamplingFrequency) < 0.01d) {
                 //use timestamps in samples
-                for (var i = 0; i < Data.Samples.Length; i++)
+                for (var i = 0; i < Data.Samples.Length; i++) {
                     list[i] = Data.Samples[i].Timestamp * Configuration.TimeMultiplicationFactor;
+                }
             }
-            else
-            {
+            else {
                 //use calculated by samplingFrequency
                 double currentTime = 0;
                 var sampleRateIndex = 0;
                 const double secondToMicrosecond = 1000000;
-                for (var i = 0; i < Data.Samples.Length; i++)
-                {
+
+                for (var i = 0; i < Data.Samples.Length; i++) {
                     list[i] = currentTime;
                     if (i >= Configuration.SampleRates[sampleRateIndex].LastSampleNumber) sampleRateIndex++;
 
@@ -92,15 +88,20 @@ namespace Comtrade.Core
         public IReadOnlyList<double> GetAnalogPrimaryChannel(int channelNumber)
         {
             double Kt = 1;
-            if (Configuration.AnalogChannelInformationList[channelNumber].IsPrimary == false)
+
+            if (Configuration.AnalogChannelInformationList[channelNumber].IsPrimary == false) {
                 Kt = Configuration.AnalogChannelInformationList[channelNumber].Primary /
                      Configuration.AnalogChannelInformationList[channelNumber].Secondary;
+            }
 
             var list = new double[Data.Samples.Length];
-            for (var i = 0; i < Data.Samples.Length; i++)
+
+            for (var i = 0; i < Data.Samples.Length; i++) {
                 list[i] = (Data.Samples[i].AnalogValues[channelNumber] *
                            Configuration.AnalogChannelInformationList[channelNumber].MultiplierA +
                            Configuration.AnalogChannelInformationList[channelNumber].MultiplierB) * Kt;
+            }
+
             return list;
         }
 
@@ -110,7 +111,11 @@ namespace Comtrade.Core
         public IReadOnlyList<bool> GetDigitalChannel(int channelNumber)
         {
             var list = new bool[Data.Samples.Length];
-            for (var i = 0; i < Data.Samples.Length; i++) list[i] = Data.Samples[i].DigitalValues[channelNumber];
+
+            for (var i = 0; i < Data.Samples.Length; i++) {
+                list[i] = Data.Samples[i].DigitalValues[channelNumber];
+            }
+
             return list;
         }
     }

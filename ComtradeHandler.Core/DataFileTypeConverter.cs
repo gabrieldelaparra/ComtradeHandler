@@ -7,8 +7,8 @@ namespace Comtrade.Core
         internal static DataFileType Get(string text)
         {
             text = text.ToLowerInvariant();
-            switch (text)
-            {
+
+            switch (text) {
                 case "ascii":
                     return DataFileType.ASCII;
                 case "binary":

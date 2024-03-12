@@ -4,8 +4,7 @@
     {
         internal static ComtradeVersion Get(string versionText)
         {
-            switch (versionText)
-            {
+            switch (versionText) {
                 case null:
                     return ComtradeVersion.V1991;
                 case "1991":

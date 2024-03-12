@@ -32,47 +32,46 @@ public class RecordWriterTest
         writer.AddDigitalChannel(new DigitalChannelInformation("channel15b", ""));
         writer.AddDigitalChannel(new DigitalChannelInformation("channel16b", ""));
         writer.AddDigitalChannel(new DigitalChannelInformation("channel17b", ""));
+
         writer.AddSample(0,
-            new double[] {0, 0, 0},
-            new[]
-            {
-                true, true, true, true,
-                true, true, true, true,
-                true, true, true, true,
-                true, true, true, true,
-                true
-            });
+                         new double[] {0, 0, 0},
+                         new[] {
+                             true, true, true, true,
+                             true, true, true, true,
+                             true, true, true, true,
+                             true, true, true, true,
+                             true
+                         });
+
         writer.AddSample(500,
-            new[] {1.0, 2.0, 3.0},
-            new[]
-            {
-                false, false, false, false,
-                false, false, false, false,
-                false, false, false, false,
-                false, false, false, false,
-                false
-            });
+                         new[] {1.0, 2.0, 3.0},
+                         new[] {
+                             false, false, false, false,
+                             false, false, false, false,
+                             false, false, false, false,
+                             false, false, false, false,
+                             false
+                         });
+
         writer.AddSample(1000,
-            new[] {-1.0, 2.0, -3.5},
-            new[]
-            {
-                false, false, false, false,
-                true, true, true, true,
-                false, true, false, true,
-                true, false, true, false,
-                true
-            });
+                         new[] {-1.0, 2.0, -3.5},
+                         new[] {
+                             false, false, false, false,
+                             true, true, true, true,
+                             false, true, false, true,
+                             true, false, true, false,
+                             true
+                         });
 
         writer.AddSample(1500,
-            new[] {5.0, 5.0, 5.0},
-            new[]
-            {
-                false, false, false, false,
-                true, true, true, true,
-                false, true, false, true,
-                true, false, true, false,
-                true
-            });
+                         new[] {5.0, 5.0, 5.0},
+                         new[] {
+                             false, false, false, false,
+                             true, true, true, true,
+                             false, true, false, true,
+                             true, false, true, false,
+                             true
+                         });
 
         writer.StartTime = new DateTime(1234567890);
         writer.TriggerTime = new DateTime(1234569000);
