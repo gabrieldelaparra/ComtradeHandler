@@ -1,18 +1,15 @@
-﻿using ComtradeHandler.Core;
+﻿using System;
+using Comtrade.Core;
+using Xunit;
 
-using NUnit.Framework;
+namespace Comtrade.UnitTests;
 
-using System;
-
-namespace ComtradeHandler.UnitTests
+public class ConfigurationHandlerTest
 {
-    [TestFixture]
-    public class ConfigurationHandlerTest
+    [Fact]
+    public void ParserTest()
     {
-        [Test]
-        public void ParserTest()
-        {
-            const string str = @"MASHUK-W2D-C60-1    ,520                 ,1999
+        const string str = @"MASHUK-W2D-C60-1    ,520                 ,1999
  5,2A, 3D
   1,F1-IA               ,A,,A     ,     0.001953,0,0,-32767,32767,   1000.0,  1.0,S
   2,F2-IB               ,B,,A     ,     0.001953,0,0,-32767,32767,   1000.0,  1.0,S
@@ -27,24 +24,23 @@ namespace ComtradeHandler.UnitTests
 BINARY
 1.00
 ";
-            var strings = str.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            var configHandler = new ConfigurationHandler();
-            configHandler.Parse(strings);
+        var strings = str.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+        var configHandler = new ConfigurationHandler();
+        configHandler.Parse(strings);
 
-            Assert.That(configHandler.StationName, Is.EqualTo("MASHUK-W2D-C60-1"));
-            Assert.That(configHandler.DeviceId, Is.EqualTo("520"));
-            Assert.That(configHandler.Version, Is.EqualTo(ComtradeVersion.V1999));
-            Assert.That(configHandler.AnalogChannelsCount, Is.EqualTo(2));
-            Assert.That(configHandler.AnalogChannelInformationList.Count, Is.EqualTo(2));
-            Assert.That(configHandler.DigitalChannelsCount, Is.EqualTo(3));
-            Assert.That(configHandler.DigitalChannelInformationList.Count, Is.EqualTo(3));
-            Assert.That(configHandler.Frequency, Is.EqualTo(50).Within(0.1));
-            Assert.That(configHandler.SamplingRateCount, Is.EqualTo(0));
-            Assert.That(configHandler.SampleRates.Count, Is.EqualTo(1));
-            //time1
-            //time2
-            Assert.That(configHandler.DataFileType, Is.EqualTo(DataFileType.Binary));
-            //add the rest
-        }
+        Assert.Equal("MASHUK-W2D-C60-1", configHandler.StationName);
+        Assert.Equal("520", configHandler.DeviceId);
+        Assert.Equal(ComtradeVersion.V1999, configHandler.Version);
+        Assert.Equal(2, configHandler.AnalogChannelsCount);
+        Assert.Equal(2, configHandler.AnalogChannelInformationList.Count);
+        Assert.Equal(3, configHandler.DigitalChannelsCount);
+        Assert.Equal(3, configHandler.DigitalChannelInformationList.Count);
+        Assert.Equal(50, configHandler.Frequency, 0.1);
+        Assert.Equal(0, configHandler.SamplingRateCount);
+        Assert.Single(configHandler.SampleRates);
+        //time1
+        //time2
+        Assert.Equal(DataFileType.Binary, configHandler.DataFileType);
+        //add the rest
     }
 }

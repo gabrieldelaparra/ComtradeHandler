@@ -1,31 +1,28 @@
-﻿using ComtradeHandler.Core;
+﻿using Comtrade.Core;
+using Xunit;
 
-using NUnit.Framework;
+namespace Comtrade.UnitTests;
 
-namespace ComtradeHandler.UnitTests
+public class AnalogChannelInfoTest
 {
-    [TestFixture]
-    public class AnalogChannelInfoTest
+    [Fact]
+    public void ParserTest()
     {
-        [Test]
-        public void ParserTest()
-        {
-            const string str = @"  8,F8-VN               ,N,,V     ,     0.012207,1,2,-32767,32767, 330000.0,100.0,S";
-            var channelInfo = new AnalogChannelInformation(str);
+        const string str = @"  8,F8-VN               ,N,,V     ,     0.012207,1,2,-32767,32767, 330000.0,100.0,S";
+        var channelInfo = new AnalogChannelInformation(str);
 
-            Assert.That(channelInfo.Index, Is.EqualTo(8));
-            Assert.That(channelInfo.Name, Is.EqualTo("F8-VN"));
-            Assert.That(channelInfo.Phase, Is.EqualTo("N"));
-            Assert.That(channelInfo.CircuitComponent, Is.EqualTo(""));
-            Assert.That(channelInfo.Units, Is.EqualTo("V"));
-            Assert.That(channelInfo.MultiplierA, Is.EqualTo(0.012207).Within(0.001));
-            Assert.That(channelInfo.MultiplierB, Is.EqualTo(1).Within(0.001));
-            Assert.That(channelInfo.Skew, Is.EqualTo(2).Within(0.001));
-            Assert.That(channelInfo.Min, Is.EqualTo(-32767).Within(0.001));
-            Assert.That(channelInfo.Max, Is.EqualTo(32767).Within(0.001));
-            Assert.That(channelInfo.Primary, Is.EqualTo(330000.0).Within(0.001));
-            Assert.That(channelInfo.Secondary, Is.EqualTo(100.0).Within(0.001));
-            Assert.That(channelInfo.IsPrimary, Is.EqualTo(false));
-        }
+        Assert.Equal(8, channelInfo.Index);
+        Assert.Equal("F8-VN", channelInfo.Name);
+        Assert.Equal("N", channelInfo.Phase);
+        Assert.Equal("", channelInfo.CircuitComponent);
+        Assert.Equal("V", channelInfo.Units);
+        Assert.Equal(0.012207, channelInfo.MultiplierA);
+        Assert.Equal(1, channelInfo.MultiplierB, 0.001);
+        Assert.Equal(2, channelInfo.Skew, 0.001);
+        Assert.Equal(-32767, channelInfo.Min, 0.001);
+        Assert.Equal(32767, channelInfo.Max, 0.001);
+        Assert.Equal(330000, channelInfo.Primary, 0.001);
+        Assert.Equal(100, channelInfo.Secondary, 0.001);
+        Assert.False(channelInfo.IsPrimary);
     }
 }

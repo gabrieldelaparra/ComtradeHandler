@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace ComtradeHandler.Core
+namespace Comtrade.Core
 {
-
     internal static class DataFileTypeConverter
     {
         internal static DataFileType Get(string text)
         {
             text = text.ToLowerInvariant();
-            switch (text) {
+            switch (text)
+            {
                 case "ascii":
                     return DataFileType.ASCII;
                 case "binary":
@@ -22,6 +22,4 @@ namespace ComtradeHandler.Core
             }
         }
     }
-
-
 }

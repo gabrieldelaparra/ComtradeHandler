@@ -1,28 +1,25 @@
-﻿using ComtradeHandler.Core;
+﻿using Comtrade.Core;
+using Xunit;
 
-using NUnit.Framework;
+namespace Comtrade.UnitTests;
 
-namespace ComtradeHandler.UnitTests
+public class DataFileHandlerTest
 {
-    [TestFixture]
-    public class DataFileHandlerTest
+    [Fact]
+    public void TestByteCount()
     {
-        [Test]
-        public void TestByteCount()
-        {
-            Assert.That(DataFileHandler.GetByteCount(1, 1, DataFileType.Binary), Is.EqualTo(12));
-            Assert.That(DataFileHandler.GetByteCount(5, 17, DataFileType.Binary), Is.EqualTo(22));
-            Assert.That(DataFileHandler.GetByteCount(5, 17, DataFileType.Float32), Is.EqualTo(32));
-            Assert.That(DataFileHandler.GetByteCount(5, 17, DataFileType.Binary32), Is.EqualTo(32));
-        }
+        Assert.Equal(12, DataFileHandler.GetByteCount(1, 1, DataFileType.Binary));
+        Assert.Equal(22, DataFileHandler.GetByteCount(5, 17, DataFileType.Binary));
+        Assert.Equal(32, DataFileHandler.GetByteCount(5, 17, DataFileType.Float32));
+        Assert.Equal(32, DataFileHandler.GetByteCount(5, 17, DataFileType.Binary32));
+    }
 
-        [Test]
-        public void TestDigitalByteCount()
-        {
-            Assert.That(DataFileHandler.GetDigitalByteCount(7), Is.EqualTo(2));
-            Assert.That(DataFileHandler.GetDigitalByteCount(16), Is.EqualTo(2));
-            Assert.That(DataFileHandler.GetDigitalByteCount(17), Is.EqualTo(4));
-            Assert.That(DataFileHandler.GetDigitalByteCount(32), Is.EqualTo(4));
-        }
+    [Fact]
+    public void TestDigitalByteCount()
+    {
+        Assert.Equal(2, DataFileHandler.GetDigitalByteCount(7));
+        Assert.Equal(2, DataFileHandler.GetDigitalByteCount(16));
+        Assert.Equal(4, DataFileHandler.GetDigitalByteCount(17));
+        Assert.Equal(4, DataFileHandler.GetDigitalByteCount(32));
     }
 }

@@ -1,20 +1,17 @@
-﻿using ComtradeHandler.Core;
+﻿using Comtrade.Core;
+using Xunit;
 
-using NUnit.Framework;
+namespace Comtrade.UnitTests;
 
-namespace ComtradeHandler.UnitTests
+public class SampleRateTest
 {
-    [TestFixture]
-    public class SampleRateTest
+    [Fact]
+    public void ParseTest()
     {
-        [Test]
-        public void ParseTest()
-        {
-            const string str = @" 0 ,  1360";
-            var sampleRate = new SampleRate(str);
+        const string str = @" 0 ,  1360";
+        var sampleRate = new SampleRate(str);
 
-            Assert.That(sampleRate.SamplingFrequency, Is.EqualTo(0).Within(0.1));
-            Assert.That(sampleRate.LastSampleNumber, Is.EqualTo(1360));
-        }
+        Assert.Equal(0, sampleRate.SamplingFrequency, 0.1);
+        Assert.Equal(1360, sampleRate.LastSampleNumber);
     }
 }

@@ -1,22 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Text;
 
-namespace ComtradeHandler.Core
+namespace Comtrade.Core
 {
     /// <summary>
-    /// Working with *.cfg
+    ///     Working with *.cfg
     /// </summary>
     public class ConfigurationHandler
     {
+        private List<AnalogChannelInformation> _analogChannelInformationList;
+
+        private List<DigitalChannelInformation> _digitalChannelInformationList;
+
+        public DataFileType DataFileType = DataFileType.Undefined;
+        public List<SampleRate> SampleRates;
+
+        internal double TimeMultiplicationFactor = 1.0;
+
+        //For testing
+        public ConfigurationHandler()
+        {
+        }
+
+        public ConfigurationHandler(string fullPathToFileCFG)
+        {
+            Parse(File.ReadAllLines(fullPathToFileCFG, Encoding.Default));
+        }
         //first line
 
         /// <summary>
-        /// According STD for COMTRADE
+        ///     According STD for COMTRADE
         /// </summary>
         public string StationName { get; set; }
 
         /// <summary>
-        /// According STD for COMTRADE
+        ///     According STD for COMTRADE
         /// </summary>
         public string DeviceId { get; set; }
 
@@ -25,148 +46,122 @@ namespace ComtradeHandler.Core
         //second line
         public int AnalogChannelsCount { get; set; }
         public int DigitalChannelsCount { get; set; }
-        private List<AnalogChannelInformation> _analogChannelInformationList;
-        /// <summary>
-        /// List of analog channel information
-        /// </summary>
-        public IReadOnlyList<AnalogChannelInformation> AnalogChannelInformationList => this._analogChannelInformationList;
-
-        List<DigitalChannelInformation> _digitalChannelInformationList;
-        /// <summary>
-        /// List of digital channel information
-        /// </summary>
-        public IReadOnlyList<DigitalChannelInformation> DigitalChannelInformationList => this._digitalChannelInformationList;
 
         /// <summary>
-        /// According STD for COMTRADE
+        ///     List of analog channel information
+        /// </summary>
+        public IReadOnlyList<AnalogChannelInformation> AnalogChannelInformationList => _analogChannelInformationList;
+
+        /// <summary>
+        ///     List of digital channel information
+        /// </summary>
+        public IReadOnlyList<DigitalChannelInformation> DigitalChannelInformationList => _digitalChannelInformationList;
+
+        /// <summary>
+        ///     According STD for COMTRADE
         /// </summary>
         public double Frequency { get; set; } = 50.0;
 
         public int SamplingRateCount { get; set; }
-        public List<SampleRate> SampleRates;
 
         /// <summary>
-        /// Time of first value in data
+        ///     Time of first value in data
         /// </summary>
         public DateTime StartTime { get; private set; }
 
         /// <summary>
-        /// Time of trigger point
+        ///     Time of trigger point
         /// </summary>
         public DateTime TriggerTime { get; private set; }
 
-        public DataFileType DataFileType = DataFileType.Undefined;
-
-        internal double TimeMultiplicationFactor = 1.0;
-
-        //For testing
-        public ConfigurationHandler()
-        {
-
-        }
-
-        public ConfigurationHandler(string fullPathToFileCFG)
-        {
-            this.Parse(System.IO.File.ReadAllLines(fullPathToFileCFG, System.Text.Encoding.Default));
-        }
-
         public void Parse(string[] strings)
         {
-            this.ParseFirstLine(strings[0]);
-            this.ParseSecondLine(strings[1]);
+            ParseFirstLine(strings[0]);
+            ParseSecondLine(strings[1]);
 
-            this._analogChannelInformationList = new List<AnalogChannelInformation>();
-            for (int i = 0; i < this.AnalogChannelsCount; i++)
-            {
-                this._analogChannelInformationList.Add(new AnalogChannelInformation(strings[2 + i]));
-            }
+            _analogChannelInformationList = new List<AnalogChannelInformation>();
+            for (var i = 0; i < AnalogChannelsCount; i++)
+                _analogChannelInformationList.Add(new AnalogChannelInformation(strings[2 + i]));
 
-            this._digitalChannelInformationList = new List<DigitalChannelInformation>();
-            for (int i = 0; i < this.DigitalChannelsCount; i++)
-            {
-                this._digitalChannelInformationList.Add(new DigitalChannelInformation(strings[2 + i + this.AnalogChannelsCount]));
-            }
+            _digitalChannelInformationList = new List<DigitalChannelInformation>();
+            for (var i = 0; i < DigitalChannelsCount; i++)
+                _digitalChannelInformationList.Add(new DigitalChannelInformation(strings[2 + i + AnalogChannelsCount]));
 
-            var strIndex = 2 + this.AnalogChannelsCount + this.DigitalChannelsCount;
-            this.ParseFrequencyLine(strings[strIndex++]);
+            var strIndex = 2 + AnalogChannelsCount + DigitalChannelsCount;
+            ParseFrequencyLine(strings[strIndex++]);
             //strIndex++;
 
-            this.ParseNumberOfSampleRates(strings[strIndex++]);
+            ParseNumberOfSampleRates(strings[strIndex++]);
             //strIndex++;
 
-            this.SampleRates = new List<SampleRate>();
-            if (this.SamplingRateCount == 0)
+            SampleRates = new List<SampleRate>();
+            if (SamplingRateCount == 0)
             {
-                this.SampleRates.Add(new SampleRate(strings[strIndex++]));
+                SampleRates.Add(new SampleRate(strings[strIndex++]));
                 //strIndex++;
             }
             else
             {
-                for (var i = 0; i < this.SamplingRateCount; i++)
-                {
-                    this.SampleRates.Add(new SampleRate(strings[strIndex + i]));
-                }
-                strIndex += this.SamplingRateCount;
+                for (var i = 0; i < SamplingRateCount; i++) SampleRates.Add(new SampleRate(strings[strIndex + i]));
+                strIndex += SamplingRateCount;
             }
 
-            this.StartTime = ParseDateTime(strings[strIndex++]);
-            this.TriggerTime = ParseDateTime(strings[strIndex++]);
+            StartTime = ParseDateTime(strings[strIndex++]);
+            TriggerTime = ParseDateTime(strings[strIndex++]);
 
-            this.ParseDataFileType(strings[strIndex++]);
+            ParseDataFileType(strings[strIndex++]);
 
-            this.ParseTimeMultiplicationFactor(strings[strIndex++]);
+            ParseTimeMultiplicationFactor(strings[strIndex++]);
 
             //TODO там остаток ещё пропущен (но он только для стандарта 2013 года)
         }
 
-        void ParseFirstLine(string firstLine)
+        private void ParseFirstLine(string firstLine)
         {
             firstLine = firstLine.Replace(GlobalSettings.WhiteSpace.ToString(), string.Empty);
             var values = firstLine.Split(GlobalSettings.Comma);
-            this.StationName = values[0];
-            this.DeviceId = values[1];
-            if (values.Length == 3)
-            {
-                this.Version = ComtradeVersionConverter.Get(values[2]);
-            }
+            StationName = values[0];
+            DeviceId = values[1];
+            if (values.Length == 3) Version = ComtradeVersionConverter.Get(values[2]);
         }
 
-        void ParseSecondLine(string secondLine)
+        private void ParseSecondLine(string secondLine)
         {
             secondLine = secondLine.Replace(GlobalSettings.WhiteSpace.ToString(), string.Empty);
             var values = secondLine.Split(GlobalSettings.Comma);
             //values[0];// not used, equal to the sum of the next two
-            this.AnalogChannelsCount = Convert.ToInt32(values[1].TrimEnd('A'), System.Globalization.CultureInfo.InvariantCulture);
-            this.DigitalChannelsCount = Convert.ToInt32(values[2].TrimEnd('D'), System.Globalization.CultureInfo.InvariantCulture);
+            AnalogChannelsCount = Convert.ToInt32(values[1].TrimEnd('A'), CultureInfo.InvariantCulture);
+            DigitalChannelsCount = Convert.ToInt32(values[2].TrimEnd('D'), CultureInfo.InvariantCulture);
         }
 
-        void ParseFrequencyLine(string frequenceLine)
+        private void ParseFrequencyLine(string frequenceLine)
         {
-            this.Frequency = Convert.ToDouble(frequenceLine.Trim(), System.Globalization.CultureInfo.InvariantCulture);
+            Frequency = Convert.ToDouble(frequenceLine.Trim(), CultureInfo.InvariantCulture);
         }
 
-        void ParseNumberOfSampleRates(string str)
+        private void ParseNumberOfSampleRates(string str)
         {
-            this.SamplingRateCount = Convert.ToInt32(str.Trim(), System.Globalization.CultureInfo.InvariantCulture);
+            SamplingRateCount = Convert.ToInt32(str.Trim(), CultureInfo.InvariantCulture);
         }
 
         internal static DateTime ParseDateTime(string str)
-        {   // "dd/mm/yyyy,hh:mm:ss.ssssss"
+        {
+            // "dd/mm/yyyy,hh:mm:ss.ssssss"
             DateTime.TryParseExact(str, GlobalSettings.DateTimeFormat,
-                                   System.Globalization.CultureInfo.InvariantCulture,
-                                   System.Globalization.DateTimeStyles.AllowWhiteSpaces,
-                                   out var result);
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AllowWhiteSpaces,
+                out var result);
             return result;
         }
 
-        void ParseDataFileType(string str)
+        private void ParseDataFileType(string str)
         {
-            this.DataFileType = DataFileTypeConverter.Get(str.Trim());
+            DataFileType = DataFileTypeConverter.Get(str.Trim());
         }
 
-        void ParseTimeMultiplicationFactor(string str)
+        private void ParseTimeMultiplicationFactor(string str)
         {
-            this.TimeMultiplicationFactor = Convert.ToDouble(str.Trim(), System.Globalization.CultureInfo.InvariantCulture);
+            TimeMultiplicationFactor = Convert.ToDouble(str.Trim(), CultureInfo.InvariantCulture);
         }
     }
 }

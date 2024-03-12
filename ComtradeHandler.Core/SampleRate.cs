@@ -1,25 +1,25 @@
-﻿
-using System;
+﻿using System;
+using System.Globalization;
 
-namespace ComtradeHandler.Core
+namespace Comtrade.Core
 {
     /// <summary>
-    /// Description of SampleRate.
+    ///     Description of SampleRate.
     /// </summary>
     public class SampleRate
     {
+        public SampleRate(string sampleRateLine)
+        {
+            var values = sampleRateLine.Split(GlobalSettings.Comma);
+            SamplingFrequency = Convert.ToDouble(values[0].Trim(), CultureInfo.InvariantCulture);
+            LastSampleNumber = Convert.ToInt32(values[1].Trim());
+        }
+
         /// <summary>
-        /// Hz
+        ///     Hz
         /// </summary>
         public double SamplingFrequency { get; }
 
         public int LastSampleNumber { get; }
-
-        public SampleRate(string sampleRateLine)
-        {
-            var values = sampleRateLine.Split(GlobalSettings.Comma);
-            this.SamplingFrequency = Convert.ToDouble(values[0].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-            this.LastSampleNumber = Convert.ToInt32(values[1].Trim());
-        }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace ComtradeHandler.Core
+﻿namespace Comtrade.Core
 {
     internal static class ComtradeVersionConverter
     {
@@ -19,6 +19,4 @@
             }
         }
     }
-
-
 }
