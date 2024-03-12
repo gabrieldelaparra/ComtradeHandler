@@ -12,9 +12,6 @@ public class RecordTest
         Assert.Throws<InvalidOperationException>(() => new RecordReader("notComtradeExtensions.trr"));
     }
 
-    /// <summary>
-    ///     Success only on maintainer machine
-    /// </summary>
     [Fact]
     public void TestOpenFile()
     {
