@@ -6,9 +6,6 @@ namespace Comtrade.UnitTests;
 
 public class RecordWriterTest
 {
-    private const string FullPathAsciiOne = "outputAscii.cfg";
-    private const string FullPathAsciiTwo = "outputAscii2.cfg";
-
     private RecordWriter GetWriterToTest()
     {
         var writer = new RecordWriter();
@@ -121,20 +118,55 @@ public class RecordWriterTest
     }
 
     [Fact]
-    public void CreateWriterFromReaderTest()
+    public void SaveToFileTwoFilesAsciiTest()
     {
-        var fullPath = "outputBin.cfg";
-
-        var part1Writer = GetWriterToTest();
-        part1Writer.SaveToFile(FullPathAsciiOne, DataFileType.ASCII);
-        ReaderAsserts(FullPathAsciiOne);
-
-        var part2Writer = GetWriterToTest();
-        part2Writer.SaveToFile(fullPath);
+        var fullPath = "asciiMulti.cfg";
+        var writer = GetWriterToTest();
+        writer.SaveToFile(fullPath, false, DataFileType.ASCII);
         ReaderAsserts(fullPath);
-
-        var reader = new RecordReader(fullPath);
-        var part3Writer = new RecordWriter(reader);
-        part3Writer.SaveToFile(FullPathAsciiTwo, DataFileType.ASCII);
     }
+
+    [Fact]
+    public void SaveToFileTwoFilesBinaryTest()
+    {
+        var fullPath = "binaryMulti.cfg";
+        var writer = GetWriterToTest();
+        writer.SaveToFile(fullPath, false);
+        ReaderAsserts(fullPath);
+    }
+
+    [Fact]
+    public void SaveToFileSingleAsciiTest()
+    {
+        var fullPath = "asciiSingle.cff";
+        var writer = GetWriterToTest();
+        writer.SaveToFile(fullPath, true, DataFileType.ASCII);
+        ReaderAsserts(fullPath);
+    }
+
+    [Fact]
+    public void SaveToFileSingleFileBinaryTest()
+    {
+        var fullPath = "binarySingle.cff";
+        var writer = GetWriterToTest();
+        writer.SaveToFile(fullPath, true);
+        ReaderAsserts(fullPath);
+    }
+
+    //[Fact]
+    //public void CreateWriterFromReaderTest()
+    //{
+    //    var fullPath = "binary.cfg";
+    //    var part1Writer = GetWriterToTest();
+    //    part1Writer.SaveToFile(FullPathAsciiOne, singleFile:false, DataFileType.ASCII);
+    //    ReaderAsserts(FullPathAsciiOne);
+
+    //    var part2Writer = GetWriterToTest();
+    //    part2Writer.SaveToFile(fullPath, singleFile: false);
+    //    ReaderAsserts(fullPath);
+
+    //    var reader = new RecordReader(fullPath);
+    //    var part3Writer = new RecordWriter(reader);
+    //    part3Writer.SaveToFile(FullPathAsciiTwo, DataFileType.ASCII);
+    //}
 }

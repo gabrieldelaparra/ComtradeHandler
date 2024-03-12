@@ -8,10 +8,10 @@ public class DataFileHandlerTest
     [Fact]
     public void TestByteCount()
     {
-        Assert.Equal(12, DataFileHandler.GetByteCount(1, 1, DataFileType.Binary));
-        Assert.Equal(22, DataFileHandler.GetByteCount(5, 17, DataFileType.Binary));
-        Assert.Equal(32, DataFileHandler.GetByteCount(5, 17, DataFileType.Float32));
-        Assert.Equal(32, DataFileHandler.GetByteCount(5, 17, DataFileType.Binary32));
+        Assert.Equal(12, DataFileHandler.GetByteCountInOneSample(1, 1, DataFileType.Binary));
+        Assert.Equal(22, DataFileHandler.GetByteCountInOneSample(5, 17, DataFileType.Binary));
+        Assert.Equal(32, DataFileHandler.GetByteCountInOneSample(5, 17, DataFileType.Float32));
+        Assert.Equal(32, DataFileHandler.GetByteCountInOneSample(5, 17, DataFileType.Binary32));
     }
 
     [Fact]

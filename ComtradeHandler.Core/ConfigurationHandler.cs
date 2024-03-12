@@ -4,171 +4,190 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace Comtrade.Core
+namespace Comtrade.Core;
+
+/// <summary>
+///     Working with *.cfg
+/// </summary>
+public class ConfigurationHandler
 {
-    /// <summary>
-    ///     Working with *.cfg
-    /// </summary>
-    public class ConfigurationHandler
+    private List<AnalogChannelInformation> _analogChannelInformationList = [];
+    private List<DigitalChannelInformation> _digitalChannelInformationList = [];
+    private List<SampleRate> _sampleRates = [];
+    public DataFileType DataFileType = DataFileType.Undefined;
+
+    internal double TimeMultiplicationFactor = 1.0;
+
+    //For testing
+    public ConfigurationHandler()
     {
-        private List<AnalogChannelInformation> _analogChannelInformationList;
+    }
 
-        private List<DigitalChannelInformation> _digitalChannelInformationList;
+    public ConfigurationHandler(string fullPathToFileCFG)
+    {
+        Parse(File.ReadAllLines(fullPathToFileCFG, Encoding.Default));
+    }
 
-        public DataFileType DataFileType = DataFileType.Undefined;
-        public List<SampleRate> SampleRates;
+    internal ConfigurationHandler(string[] lines)
+    {
+        Parse(lines);
+    }
 
-        internal double TimeMultiplicationFactor = 1.0;
+    /// <summary>
+    ///     According STD for COMTRADE
+    /// </summary>
+    public string StationName { get; private set; } = string.Empty;
 
-        //For testing
-        public ConfigurationHandler()
-        {
+    /// <summary>
+    ///     According STD for COMTRADE
+    /// </summary>
+    public string DeviceId { get; private set; } = string.Empty;
+
+    public ComtradeVersion Version { get; private set; } = ComtradeVersion.V1991;
+
+    //second line
+    public int AnalogChannelsCount { get; private set; }
+    public int DigitalChannelsCount { get; private set; }
+
+    public IReadOnlyList<SampleRate> SampleRates => _sampleRates;
+    /// <summary>
+    ///     List of analog channel information
+    /// </summary>
+    public IReadOnlyList<AnalogChannelInformation> AnalogChannelInformationList => _analogChannelInformationList;
+
+    /// <summary>
+    ///     List of digital channel information
+    /// </summary>
+    public IReadOnlyList<DigitalChannelInformation> DigitalChannelInformationList => _digitalChannelInformationList;
+
+    /// <summary>
+    ///     According STD for COMTRADE
+    /// </summary>
+    public double Frequency { get; set; } = 50.0;
+
+    public int SamplingRateCount { get; set; }
+
+    /// <summary>
+    ///     Time of first value in data
+    ///     Max time resolution 100ns (.net DateTime constrain)
+    /// </summary>
+    public DateTime StartTime { get; private set; }
+
+    /// <summary>
+    ///     Time of trigger point
+    ///     Max time resolution 100ns (.net DateTime constrain)
+    /// </summary>
+    public DateTime TriggerTime { get; private set; }
+    internal bool TimeLineNanoSecondResolution { get; set; }
+
+    public void Parse(string[] strings)
+    {
+        ParseFirstLine(strings[0]);
+        ParseSecondLine(strings[1]);
+
+        _analogChannelInformationList = new List<AnalogChannelInformation>();
+
+        for (var i = 0; i < AnalogChannelsCount; i++) {
+            _analogChannelInformationList.Add(new AnalogChannelInformation(strings[2 + i]));
         }
 
-        public ConfigurationHandler(string fullPathToFileCFG)
-        {
-            Parse(File.ReadAllLines(fullPathToFileCFG, Encoding.Default));
+        _digitalChannelInformationList = new List<DigitalChannelInformation>();
+
+        for (var i = 0; i < DigitalChannelsCount; i++) {
+            _digitalChannelInformationList.Add(new DigitalChannelInformation(strings[2 + i + AnalogChannelsCount]));
         }
-        //first line
 
-        /// <summary>
-        ///     According STD for COMTRADE
-        /// </summary>
-        public string StationName { get; set; }
+        var strIndex = 2 + AnalogChannelsCount + DigitalChannelsCount;
+        ParseFrequencyLine(strings[strIndex++]);
 
-        /// <summary>
-        ///     According STD for COMTRADE
-        /// </summary>
-        public string DeviceId { get; set; }
+        ParseNumberOfSampleRates(strings[strIndex++]);
 
-        public ComtradeVersion Version { get; set; } = ComtradeVersion.V1991;
+        _sampleRates = new List<SampleRate>();
 
-        //second line
-        public int AnalogChannelsCount { get; set; }
-        public int DigitalChannelsCount { get; set; }
-
-        /// <summary>
-        ///     List of analog channel information
-        /// </summary>
-        public IReadOnlyList<AnalogChannelInformation> AnalogChannelInformationList => _analogChannelInformationList;
-
-        /// <summary>
-        ///     List of digital channel information
-        /// </summary>
-        public IReadOnlyList<DigitalChannelInformation> DigitalChannelInformationList => _digitalChannelInformationList;
-
-        /// <summary>
-        ///     According STD for COMTRADE
-        /// </summary>
-        public double Frequency { get; set; } = 50.0;
-
-        public int SamplingRateCount { get; set; }
-
-        /// <summary>
-        ///     Time of first value in data
-        /// </summary>
-        public DateTime StartTime { get; private set; }
-
-        /// <summary>
-        ///     Time of trigger point
-        /// </summary>
-        public DateTime TriggerTime { get; private set; }
-
-        public void Parse(string[] strings)
-        {
-            ParseFirstLine(strings[0]);
-            ParseSecondLine(strings[1]);
-
-            _analogChannelInformationList = new List<AnalogChannelInformation>();
-
-            for (var i = 0; i < AnalogChannelsCount; i++) {
-                _analogChannelInformationList.Add(new AnalogChannelInformation(strings[2 + i]));
-            }
-
-            _digitalChannelInformationList = new List<DigitalChannelInformation>();
-
-            for (var i = 0; i < DigitalChannelsCount; i++) {
-                _digitalChannelInformationList.Add(new DigitalChannelInformation(strings[2 + i + AnalogChannelsCount]));
-            }
-
-            var strIndex = 2 + AnalogChannelsCount + DigitalChannelsCount;
-            ParseFrequencyLine(strings[strIndex++]);
+        if (SamplingRateCount == 0) {
+            _sampleRates.Add(new SampleRate(strings[strIndex++]));
             //strIndex++;
-
-            ParseNumberOfSampleRates(strings[strIndex++]);
-            //strIndex++;
-
-            SampleRates = new List<SampleRate>();
-
-            if (SamplingRateCount == 0) {
-                SampleRates.Add(new SampleRate(strings[strIndex++]));
-                //strIndex++;
-            }
-            else {
-                for (var i = 0; i < SamplingRateCount; i++) {
-                    SampleRates.Add(new SampleRate(strings[strIndex + i]));
-                }
-
-                strIndex += SamplingRateCount;
+        }
+        else {
+            for (var i = 0; i < SamplingRateCount; i++) {
+                _sampleRates.Add(new SampleRate(strings[strIndex + i]));
             }
 
-            StartTime = ParseDateTime(strings[strIndex++]);
-            TriggerTime = ParseDateTime(strings[strIndex++]);
-
-            ParseDataFileType(strings[strIndex++]);
-
-            ParseTimeMultiplicationFactor(strings[strIndex++]);
-
-            //TODO там остаток ещё пропущен (но он только для стандарта 2013 года)
+            strIndex += SamplingRateCount;
         }
 
-        private void ParseFirstLine(string firstLine)
-        {
-            firstLine = firstLine.Replace(GlobalSettings.WhiteSpace.ToString(), string.Empty);
-            var values = firstLine.Split(GlobalSettings.Comma);
-            StationName = values[0];
-            DeviceId = values[1];
-            if (values.Length == 3) Version = ComtradeVersionConverter.Get(values[2]);
-        }
+        StartTime = ParseDateTime(strings[strIndex++], out var nanosecond);
+        TimeLineNanoSecondResolution = nanosecond;
+        TriggerTime = ParseDateTime(strings[strIndex++], out _);
 
-        private void ParseSecondLine(string secondLine)
-        {
-            secondLine = secondLine.Replace(GlobalSettings.WhiteSpace.ToString(), string.Empty);
-            var values = secondLine.Split(GlobalSettings.Comma);
-            //values[0];// not used, equal to the sum of the next two
-            AnalogChannelsCount = Convert.ToInt32(values[1].TrimEnd('A'), CultureInfo.InvariantCulture);
-            DigitalChannelsCount = Convert.ToInt32(values[2].TrimEnd('D'), CultureInfo.InvariantCulture);
-        }
+        ParseDataFileType(strings[strIndex++]);
 
-        private void ParseFrequencyLine(string frequenceLine)
-        {
-            Frequency = Convert.ToDouble(frequenceLine.Trim(), CultureInfo.InvariantCulture);
-        }
+        ParseTimeMultiplicationFactor(strings[strIndex++]);
 
-        private void ParseNumberOfSampleRates(string str)
-        {
-            SamplingRateCount = Convert.ToInt32(str.Trim(), CultureInfo.InvariantCulture);
-        }
+        //TODO там остаток ещё пропущен (но он только для стандарта 2013 года)
+        //TODO add non-essential fields for 2013 standard
+    }
 
-        internal static DateTime ParseDateTime(string str)
-        {
-            // "dd/mm/yyyy,hh:mm:ss.ssssss"
-            DateTime.TryParseExact(str, GlobalSettings.DateTimeFormat,
+    private void ParseFirstLine(string firstLine)
+    {
+        firstLine = firstLine.Replace(GlobalSettings.WhiteSpace.ToString(), string.Empty);
+        var values = firstLine.Split(GlobalSettings.Comma);
+        StationName = values[0];
+        DeviceId = values[1];
+
+        if (values.Length == 3) {
+            Version = ComtradeVersionConverter.Get(values[2]);
+        }
+    }
+
+    private void ParseSecondLine(string secondLine)
+    {
+        secondLine = secondLine.Replace(GlobalSettings.WhiteSpace.ToString(), string.Empty);
+        var values = secondLine.Split(GlobalSettings.Comma);
+        //values[0];// not used, equal to the sum of the next two
+        AnalogChannelsCount = Convert.ToInt32(values[1].TrimEnd('A'), CultureInfo.InvariantCulture);
+        DigitalChannelsCount = Convert.ToInt32(values[2].TrimEnd('D'), CultureInfo.InvariantCulture);
+    }
+
+    private void ParseFrequencyLine(string frequenceLine)
+    {
+        Frequency = Convert.ToDouble(frequenceLine.Trim(), CultureInfo.InvariantCulture);
+    }
+
+    private void ParseNumberOfSampleRates(string str)
+    {
+        SamplingRateCount = Convert.ToInt32(str.Trim(), CultureInfo.InvariantCulture);
+    }
+
+    public static DateTime ParseDateTime(string str, out bool nanoSecond)
+    {
+        if (DateTime.TryParseExact(str, GlobalSettings.DateTimeFormatForParseMicroSecond,
                                    CultureInfo.InvariantCulture,
                                    DateTimeStyles.AllowWhiteSpaces,
-                                   out var result);
-
+                                   out var result)) {
+            nanoSecond = false;
             return result;
         }
 
-        private void ParseDataFileType(string str)
-        {
-            DataFileType = DataFileTypeConverter.Get(str.Trim());
-        }
+        var strings = str.Split('.');
+        str = strings[0] + '.' + strings[1].Substring(0, 7);
 
-        private void ParseTimeMultiplicationFactor(string str)
-        {
-            TimeMultiplicationFactor = Convert.ToDouble(str.Trim(), CultureInfo.InvariantCulture);
-        }
+        DateTime.TryParseExact(str, GlobalSettings.DateTimeFormatForParseNanoSecond,
+                               CultureInfo.InvariantCulture,
+                               DateTimeStyles.AllowWhiteSpaces,
+                               out result);
+
+        nanoSecond = true;
+        return result;
+    }
+
+    private void ParseDataFileType(string str)
+    {
+        DataFileType = DataFileTypeConverter.Get(str.Trim());
+    }
+
+    private void ParseTimeMultiplicationFactor(string str)
+    {
+        TimeMultiplicationFactor = Convert.ToDouble(str.Trim(), CultureInfo.InvariantCulture);
     }
 }

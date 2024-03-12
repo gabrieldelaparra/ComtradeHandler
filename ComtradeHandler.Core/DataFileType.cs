@@ -1,28 +1,27 @@
-﻿namespace Comtrade.Core
+﻿namespace Comtrade.Core;
+
+/// <summary>
+///     Data file type
+/// </summary>
+public enum DataFileType
 {
     /// <summary>
-    ///     Data file type
     /// </summary>
-    public enum DataFileType
-    {
-        /// <summary>
-        /// </summary>
-        Undefined = 0,
+    Undefined = 0,
 
-        /// <summary>
-        /// </summary>
-        ASCII,
+    /// <summary>
+    /// </summary>
+    ASCII,
 
-        /// <summary>
-        /// </summary>
-        Binary,
+    /// <summary>
+    /// </summary>
+    Binary,
 
-        /// <summary>
-        /// </summary>
-        Binary32,
+    /// <summary>
+    /// </summary>
+    Binary32,
 
-        /// <summary>
-        /// </summary>
-        Float32
-    }
+    /// <summary>
+    /// </summary>
+    Float32
 }

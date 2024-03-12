@@ -3,236 +3,290 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 
-namespace Comtrade.Core
+namespace Comtrade.Core;
+
+/// <summary>
+///     For creating COMTRADE files
+/// </summary>
+public class RecordWriter
 {
+    private readonly List<AnalogChannelInformation> _analogChannels = [];
+
+    private readonly string _deviceId = string.Empty;
+    private readonly List<DigitalChannelInformation> _digitalChannels = [];
     /// <summary>
-    ///     For creating COMTRADE files
-    ///     Currently, supported COMTRADE version 1999: ASCII or Binary, timestamp guided
+    ///     Hz
     /// </summary>
-    public class RecordWriter
+    private readonly double _frequency = 50;
+    private readonly List<SampleRate> _sampleRates = [];
+    private readonly List<DataFileSample> _samples = [];
+
+    private readonly string _stationName = string.Empty;
+
+    /// <summary>
+    ///     Create empty writer
+    /// </summary>
+    public RecordWriter()
     {
-        private readonly List<AnalogChannelInformation> analogChannelInformationList;
-        private readonly List<DigitalChannelInformation> digitalChannelInformationList;
+    }
 
-        private readonly List<DataFileSample> sampleList;
-        private readonly List<SampleRate> sampleRateList;
+    /// <summary>
+    ///     Create writer with data from reader
+    /// </summary>
+    public RecordWriter(RecordReader reader)
+    {
+        _stationName = reader.Configuration.StationName;
+        _deviceId = reader.Configuration.DeviceId;
+        _frequency = reader.Configuration.Frequency;
 
-        /// <summary>
-        ///     Time of first value in data
-        /// </summary>
-        public DateTime StartTime;
+        _samples.AddRange(reader.Data.Samples);
+        _analogChannels.AddRange(reader.Configuration.AnalogChannelInformationList);
+        _digitalChannels.AddRange(reader.Configuration.DigitalChannelInformationList);
+        _sampleRates.AddRange(reader.Configuration.SampleRates);
 
-        /// <summary>
-        ///     Time of trigger point
-        /// </summary>
-        public DateTime TriggerTime;
+        StartTime = reader.Configuration.StartTime;
+        TriggerTime = reader.Configuration.TriggerTime;
+    }
 
-        /// <summary>
-        ///     Create empty writer
-        /// </summary>
-        public RecordWriter()
-        {
-            sampleList = new List<DataFileSample>();
-            analogChannelInformationList = new List<AnalogChannelInformation>();
-            digitalChannelInformationList = new List<DigitalChannelInformation>();
+    /// <summary>
+    ///     Time of first value in data
+    /// </summary>
+    public DateTime StartTime { get; set; }
+
+    /// <summary>
+    ///     Time of trigger point
+    /// </summary>
+    public DateTime TriggerTime { get; set; }
+
+    /// <summary>
+    /// </summary>
+    public void AddAnalogChannel(AnalogChannelInformation analogChannel)
+    {
+        analogChannel.Index = _analogChannels.Count + 1;
+        _analogChannels.Add(analogChannel);
+    }
+
+    /// <summary>
+    /// </summary>
+    public void AddDigitalChannel(DigitalChannelInformation digitalChannel)
+    {
+        digitalChannel.Index = _digitalChannels.Count + 1;
+        _digitalChannels.Add(digitalChannel);
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="timestamp">In nanosecond, but can be in microsecond depending on CFG</param>
+    /// <param name="analogValues"></param>
+    /// <param name="digitalValues"></param>
+    public void AddSample(int timestamp, double[] analogValues, bool[] digitalValues)
+    {
+        if (_analogChannels.Count != analogValues.Length) {
+            throw new InvalidOperationException(
+                $"Analogs count ({analogValues.Length}) must be equal to channels count ({_analogChannels.Count})");
         }
 
-        /// <summary>
-        ///     Create writer with data from reader
-        /// </summary>
-        public RecordWriter(RecordReader reader)
-        {
-            StationName = reader.Configuration.StationName;
-            DeviceId = reader.Configuration.DeviceId;
-
-            sampleList = new List<DataFileSample>(reader.Data.Samples);
-
-            analogChannelInformationList =
-                new List<AnalogChannelInformation>(reader.Configuration.AnalogChannelInformationList);
-
-            digitalChannelInformationList =
-                new List<DigitalChannelInformation>(reader.Configuration.DigitalChannelInformationList);
-
-            sampleRateList = new List<SampleRate>(reader.Configuration.SampleRates);
-
-            StartTime = reader.Configuration.StartTime;
-            TriggerTime = reader.Configuration.TriggerTime;
+        if (_digitalChannels.Count != digitalValues.Length) {
+            throw new InvalidOperationException(
+                $"Digitals count ({digitalValues.Length}) must be equal to channels count ({_digitalChannels.Count})");
         }
 
-        /// <summary>
-        /// </summary>
-        public string StationName { get; }
+        _samples.Add(new DataFileSample(_samples.Count + 1, timestamp, analogValues, digitalValues));
+    }
 
-        /// <summary>
-        /// </summary>
-        public string DeviceId { get; }
-
-        /// <summary>
-        /// </summary>
-        public void AddAnalogChannel(AnalogChannelInformation analogChannel)
-        {
-            analogChannel.Index = analogChannelInformationList.Count + 1;
-            analogChannelInformationList.Add(analogChannel);
+    /// <summary>
+    ///     Support only Ascii or Binary file type
+    /// </summary>
+    public void SaveToFile(string fullPathToFile, bool singleFile, DataFileType dataFileType = DataFileType.Binary)
+    {
+        if (dataFileType is DataFileType.Undefined or DataFileType.Binary32 or DataFileType.Float32) {
+            throw new InvalidOperationException($"dataFileType={dataFileType} currently unsupported");
         }
 
-        /// <summary>
-        /// </summary>
-        public void AddDigitalChannel(DigitalChannelInformation digitalChannel)
-        {
-            digitalChannel.Index = digitalChannelInformationList.Count + 1;
-            digitalChannelInformationList.Add(digitalChannel);
+        var fileInfo = new FileInfo(fullPathToFile);
+        var path = Path.GetDirectoryName(fileInfo.FullName)!;
+        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileInfo.FullName);
+
+        if (singleFile) {
+            using var fileStreamCff = new FileStream(Path.Combine(path, fileNameWithoutExtension) + GlobalSettings.ExtensionCFF, FileMode.Create);
+            SaveToStreamCFGSection(fileStreamCff, singleFile, dataFileType);
+            SaveToStreamDATSection(fileStreamCff, singleFile, dataFileType);
+        }
+        else {
+            using var fileStreamCfg = new FileStream(Path.Combine(path, fileNameWithoutExtension) + GlobalSettings.ExtensionCFG, FileMode.Create);
+            SaveToStreamCFGSection(fileStreamCfg, singleFile, dataFileType);
+
+            using var fileStreamDat = new FileStream(Path.Combine(path, fileNameWithoutExtension) + GlobalSettings.ExtensionDAT, FileMode.Create);
+            SaveToStreamDATSection(fileStreamDat, singleFile, dataFileType);
+        }
+    }
+
+    private void SaveToStreamCFGSection(Stream stream, bool singleFile, DataFileType dataFileType)
+    {
+        CalculateScaleFactorAB(dataFileType);
+
+        var strings = new List<string>();
+
+        if (singleFile) {
+            strings.Add("--- file type: CFG ---");
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="timestamp">micro second</param>
-        /// <param name="analogs"></param>
-        /// <param name="digitals"></param>
-        public void AddSample(int timestamp, double[] analogs, bool[] digitals)
-        {
-            var notNullAnalogs = analogs;
-            var notNullDigitals = digitals;
-            if (analogs == null) notNullAnalogs = new double[0];
-            if (digitals == null) notNullDigitals = new bool[0];
+        strings.Add(_stationName + GlobalSettings.Comma +
+                    _deviceId + GlobalSettings.Comma +
+                    "2013");
 
-            if (analogChannelInformationList.Count != notNullAnalogs.Length) {
-                throw new InvalidOperationException(
-                    $"Analog count ({notNullAnalogs.Length}) must be equal to channels count ({analogChannelInformationList.Count})");
-            }
+        strings.Add((_analogChannels.Count + _digitalChannels.Count).ToString() + GlobalSettings.Comma +
+                    _analogChannels.Count + "A" + GlobalSettings.Comma +
+                    _digitalChannels.Count + "D");
 
-            if (digitalChannelInformationList.Count != notNullDigitals.Length) {
-                throw new InvalidOperationException(
-                    $"Digital count ({notNullDigitals.Length}) must be equal to channels count ({digitalChannelInformationList.Count})");
-            }
-
-            sampleList.Add(new DataFileSample(sampleList.Count + 1, timestamp, notNullAnalogs, notNullDigitals));
+        foreach (var analogChannel in _analogChannels) {
+            strings.Add(analogChannel.ToCFGString());
         }
 
-        /// <summary>
-        ///     Support only Ascii or Binary file type
-        /// </summary>
-        public void SaveToFile(string fullPathToFile, DataFileType dataFileType = DataFileType.Binary)
-        {
-            if (dataFileType == DataFileType.Undefined ||
-                dataFileType == DataFileType.Binary32 ||
-                dataFileType == DataFileType.Float32) {
-                throw new InvalidOperationException("Currently unsupported " + dataFileType);
+        for (var i = 0; i < _digitalChannels.Count; i++) {
+            strings.Add(_digitalChannels[i].ToCFGString());
+        }
+
+        strings.Add(_frequency.ToString(CultureInfo.InvariantCulture));
+
+        if (_sampleRates == null || _sampleRates.Count == 0) {
+            strings.Add("0");
+
+            strings.Add("0" + GlobalSettings.Comma +
+                        _samples.Count);
+        }
+        else {
+            strings.Add(_sampleRates.Count.ToString());
+
+            foreach (var sampleRate in _sampleRates) {
+                strings.Add(sampleRate.SamplingFrequency.ToString() + GlobalSettings.Comma +
+                            sampleRate.LastSampleNumber);
             }
+        }
 
+        strings.Add(StartTime.ToString(GlobalSettings.DateTimeFormatForWrite,
+                                       CultureInfo.InvariantCulture));
 
-            var path = Path.GetDirectoryName(fullPathToFile);
-            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fullPathToFile);
+        strings.Add(TriggerTime.ToString(GlobalSettings.DateTimeFormatForWrite,
+                                         CultureInfo.InvariantCulture));
 
-            CalculateScaleFactorAB(dataFileType);
+        switch (dataFileType) {
+            case DataFileType.ASCII:
+                strings.Add("ASCII");
+                break;
+            case DataFileType.Binary:
+                strings.Add("BINARY");
+                break;
+            case DataFileType.Binary32:
+                strings.Add("BINARY32");
+                break;
+            case DataFileType.Float32:
+                strings.Add("FLOAT32");
+                break;
+            default:
+                throw new InvalidOperationException("Undefined data file type =" + dataFileType);
+        }
 
-            //CFG part
-            var strings = new List<string>();
+        strings.Add("1.0");
 
-            strings.Add(StationName + GlobalSettings.Comma +
-                        DeviceId + GlobalSettings.Comma +
-                        "1999");
+        if (singleFile) {
+            strings.Add("--- file type: INF ---");
+            strings.Add(GlobalSettings.NewLine);
+            strings.Add("--- file type: HDR ---");
+            strings.Add(GlobalSettings.NewLine);
+        }
 
-            strings.Add((analogChannelInformationList.Count + digitalChannelInformationList.Count).ToString() +
-                        GlobalSettings.Comma +
-                        analogChannelInformationList.Count + "A" + GlobalSettings.Comma +
-                        digitalChannelInformationList.Count + "D");
+        foreach (var str in strings.SkipLast(1)) {
+            stream.Write(Encoding.UTF8.GetBytes(str));
 
-            for (var i = 0; i < analogChannelInformationList.Count; i++) {
-                strings.Add(analogChannelInformationList[i].ToCFGString());
+            if (str != GlobalSettings.NewLine) {
+                stream.Write(Encoding.UTF8.GetBytes(GlobalSettings.NewLine));
             }
+        }
 
-            for (var i = 0; i < digitalChannelInformationList.Count; i++) {
-                strings.Add(digitalChannelInformationList[i].ToCFGString());
-            }
+        stream.Write(Encoding.UTF8.GetBytes(strings[^1]));
+    }
 
-            strings.Add("50.0");
+    public void SaveToStreamDATSection(Stream stream, bool singleFile, DataFileType dataFileType)
+    {
+        var strings = new List<string>();
 
-            if (sampleRateList == null || sampleRateList.Count == 0) {
-                strings.Add("0");
-
-                strings.Add("0" + GlobalSettings.Comma +
-                            sampleList.Count);
-            }
-            else {
-                strings.Add(sampleRateList.Count.ToString());
-
-                foreach (var sampleRate in sampleRateList) {
-                    strings.Add(sampleRate.SamplingFrequency.ToString() + GlobalSettings.Comma +
-                                sampleRate.LastSampleNumber);
-                }
-            }
-
-            strings.Add(StartTime.ToString(GlobalSettings.DateTimeFormat,
-                                           CultureInfo.InvariantCulture));
-
-            strings.Add(TriggerTime.ToString(GlobalSettings.DateTimeFormat,
-                                             CultureInfo.InvariantCulture));
-
-            switch (dataFileType) {
-                case DataFileType.ASCII:
-                    strings.Add("ASCII");
-                    break;
-                case DataFileType.Binary:
-                    strings.Add("BINARY");
-                    break;
-                case DataFileType.Binary32:
-                    strings.Add("BINARY32");
-                    break;
-                case DataFileType.Float32:
-                    strings.Add("FLOAT32");
-                    break;
-                default:
-                    throw new InvalidOperationException("Undefined data file type =" + dataFileType);
-            }
-
-            strings.Add("1.0");
-
-            File.WriteAllLines(Path.Combine(path, fileNameWithoutExtension) + GlobalSettings.ExtensionCFG, strings);
-
-            //DAT part
-            var dataFileFullPath = Path.Combine(path, fileNameWithoutExtension) + GlobalSettings.ExtensionDAT;
-
+        if (singleFile) {
             if (dataFileType == DataFileType.ASCII) {
-                strings = new List<string>();
+                strings.Add("--- file type: DAT ASCII ---");
 
-                foreach (var sample in sampleList) {
+                foreach (var sample in _samples) {
                     strings.Add(sample.ToASCIIDAT());
                 }
 
-                File.WriteAllLines(dataFileFullPath, strings);
+                foreach (var str in strings.SkipLast(1)) {
+                    stream.Write(Encoding.UTF8.GetBytes(str));
+                    stream.Write(Encoding.UTF8.GetBytes(GlobalSettings.NewLine));
+                }
+
+                stream.Write(Encoding.UTF8.GetBytes(strings[^1]));
             }
             else {
-                var bytes = new List<byte>();
+                //binary
+                var byteInOneSample = DataFileHandler.GetByteCountInOneSample(_analogChannels.Count, _digitalChannels.Count, dataFileType);
+                strings.Add($"--- file type: DAT BINARY: {byteInOneSample * _samples.Count} ---");
 
-                foreach (var sample in sampleList) {
-                    bytes.AddRange(sample.ToByteDAT(dataFileType, analogChannelInformationList));
+                foreach (var str in strings) {
+                    stream.Write(Encoding.UTF8.GetBytes(str));
+                    stream.Write(Encoding.UTF8.GetBytes(GlobalSettings.NewLine));
                 }
 
-                File.WriteAllBytes(dataFileFullPath, bytes.ToArray());
+                foreach (var sample in _samples) {
+                    stream.Write(sample.ToByteDAT(dataFileType, _analogChannels));
+                }
             }
         }
+        else {
+            if (dataFileType == DataFileType.ASCII) {
+                foreach (var sample in _samples) {
+                    strings.Add(sample.ToASCIIDAT());
+                }
 
-        private void CalculateScaleFactorAB(DataFileType dataFileType)
-        {
-            if (dataFileType == DataFileType.Binary ||
-                dataFileType == DataFileType.Binary32)
-                //i make it same, but in theory, bin32 can be more precise
-            {
-                for (var i = 0; i < analogChannelInformationList.Count; i++) {
-                    var min = sampleList.Min(x => x.AnalogValues[i]);
-                    var max = sampleList.Max(x => x.AnalogValues[i]);
-                    analogChannelInformationList[i].MultiplierB = (max + min) / 2.0;
-                    if (max != min) analogChannelInformationList[i].MultiplierA = (max - min) / 32767.0; //65536
-                    analogChannelInformationList[i].Min = -32767; //by standart 1999
-                    analogChannelInformationList[i].Max = 32767; //by standart 1999
+                foreach (var str in strings.SkipLast(1)) {
+                    stream.Write(Encoding.UTF8.GetBytes(str));
+                    stream.Write(Encoding.UTF8.GetBytes(GlobalSettings.NewLine));
+                }
+
+                stream.Write(Encoding.UTF8.GetBytes(strings[^1]));
+            }
+            else {
+                //binary
+                foreach (var sample in _samples) {
+                    stream.Write(sample.ToByteDAT(dataFileType, _analogChannels));
                 }
             }
-            else if (dataFileType == DataFileType.ASCII) {
-                foreach (var analogChannelInformation in analogChannelInformationList) {
-                    analogChannelInformation.Min = -32767; //by standart 1999
-                    analogChannelInformation.Max = 32767; //by standart 1999
+        }
+    }
+
+    private void CalculateScaleFactorAB(DataFileType dataFileType)
+    {
+        if (dataFileType == DataFileType.Binary ||
+            dataFileType == DataFileType.Binary32) {
+            //i make it same, but in theory, bin32 can be more precise			
+            for (var i = 0; i < _analogChannels.Count; i++) {
+                var min = _samples.Min(x => x.AnalogValues[i]);
+                var max = _samples.Max(x => x.AnalogValues[i]);
+                _analogChannels[i].MultiplierB = (max + min) / 2.0;
+
+                if (max != min) {
+                    _analogChannels[i].MultiplierA = (max - min) / 32767.0; //65536						
                 }
+
+                _analogChannels[i].Min = -32767; //by standart 1999
+                _analogChannels[i].Max = 32767; //by standart 1999					
+            }
+        }
+        else if (dataFileType == DataFileType.ASCII) {
+            foreach (var analogChannelInformation in _analogChannels) {
+                analogChannelInformation.Min = -32767; //by standart 1999
+                analogChannelInformation.Max = 32767; //by standart 1999
             }
         }
     }
