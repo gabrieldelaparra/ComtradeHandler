@@ -45,21 +45,15 @@ jobs:
       - name: Publish for Release
         shell: bash
         run: |
-          # tag=$(grep '<Version>' < ./ComtradeHandler.Core/ComtradeHandler.Core.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/')
           tag=v${{ steps.version.outputs.TAG_NAME }}
           release_name="ComtradeHandler-$tag"
 
-          # Publish everything
           dotnet publish ./ComtradeHandler.Core/ComtradeHandler.Core.csproj -c Release -o "$release_name"
-
           7z a -tzip "${release_name}.zip" "./${release_name}/*"
-
-          # Delete output directory
-          rm -r "$release_name"
 
       - name: Publish
         uses: softprops/action-gh-release@v2
         with:
-          files: "ComtradeHandler*"
+          files: "${release_name}.zip"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
