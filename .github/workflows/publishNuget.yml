@@ -20,13 +20,34 @@ jobs:
         run: |
           dotnet pack ./ComtradeHandler.Core -c Release --no-build
 
-      - name: Publish to Nuget
-        env:
-          NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
-        run: |
-          dotnet nuget push ./ComtradeHandler.Core/**/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+      # - name: Publish to Nuget
+      #   env:
+      #     NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
+      #   run: |
+      #     dotnet nuget push ./ComtradeHandler.Core/**/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
 
-      - name: Publish to Github
+      # - name: Publish to Github
+      #   run: |
+      #     dotnet nuget add source --username gabrieldelaparra --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/gabrieldelaparra/index.json"
+      #     dotnet nuget push ./ComtradeHandler.Core/**/*.nupkg --source "github"
+
+      - name: Publish for Release
+        shell: bash
         run: |
-          dotnet nuget add source --username gabrieldelaparra --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/gabrieldelaparra/index.json"
-          dotnet nuget push ./ComtradeHandler.Core/**/*.nupkg --source "github"
+          tag=$(git describe --tags --abbrev=0)
+          release_name="ComtradeHandler-$tag
+
+          # Build everything
+          dotnet publish ./ComtradeHandler.Core/ComtradeHandler.Core.csproj -c Release -o "$release_name"
+
+          7z a -tzip "${release_name}.zip" "./${release_name}/*"
+
+          # Delete output directory
+          rm -r "$release_name"
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "ComtradeHandler*"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
