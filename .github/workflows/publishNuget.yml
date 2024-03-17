@@ -12,9 +12,13 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Build
+        run: |
+          dotnet build ./ComtradeHandler.Core -c Release
+
       - name: Pack Project
         run: |
-          dotnet pack ./ComtradeHandler.Core -c Release
+          dotnet pack ./ComtradeHandler.Core -c Release --no-build
 
       - name: Publish to Nuget
         env:
