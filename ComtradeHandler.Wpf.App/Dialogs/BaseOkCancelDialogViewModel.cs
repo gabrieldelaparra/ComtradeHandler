@@ -6,8 +6,8 @@ public abstract class BaseOkCancelDialogViewModel<T> : ViewModelBase
 {
     protected BaseOkCancelDialogViewModel()
     {
-        OkCommand = new RelayCommand(ExecuteOkCommand, () => CanExecuteOkCommand);
-        CancelCommand = new RelayCommand(ExecuteCancelCommand, () => CanExecuteCancelCommand);
+        OkCommand = new RelayCommand(ExecuteOkCommand, (object? parameter) => CanExecuteOkCommand);
+        CancelCommand = new RelayCommand(ExecuteCancelCommand, (object? parameter) => CanExecuteCancelCommand);
     }
 
     protected string CancelButtonText { get; set; } = "Cancel";
@@ -21,12 +21,12 @@ public abstract class BaseOkCancelDialogViewModel<T> : ViewModelBase
     public Action<T>? OnExecuteOkCommand { get; set; }
     public T? Result { get; set; }
 
-    public void ExecuteCancelCommand()
+    private void ExecuteCancelCommand(object? parameter)
     {
         OnExecuteCancelCommand?.Invoke();
     }
 
-    public virtual void ExecuteOkCommand()
+    protected virtual void ExecuteOkCommand(object? parameter)
     {
         if (Result is not null) {
             OnExecuteOkCommand?.Invoke(Result);
