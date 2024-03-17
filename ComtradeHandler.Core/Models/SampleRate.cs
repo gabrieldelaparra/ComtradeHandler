@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Globalization;
 
-namespace ComtradeHandler.Core;
+namespace ComtradeHandler.Core.Models;
 
-/// <summary>
-///     Description of SampleRate.
-/// </summary>
 public class SampleRate
 {
     public SampleRate(string sampleRateLine)
@@ -15,10 +12,6 @@ public class SampleRate
         LastSampleNumber = Convert.ToInt32(values[1].Trim());
     }
 
-    /// <summary>
-    ///     Hz
-    /// </summary>
     public double SamplingFrequency { get; }
-
     public int LastSampleNumber { get; }
 }

@@ -1,5 +1,5 @@
 ﻿using System;
-using ComtradeHandler.Core;
+using ComtradeHandler.Core.Handlers;
 using Xunit;
 
 namespace ComtradeHandler.UnitTests;
@@ -18,8 +18,7 @@ public class RecordReaderTest
     [Fact]
     public void TestOpenFile()
     {
-        RecordReader record;
-        record = new RecordReader(@"Resources\sample_ascii.dat");
+        var record = new RecordReader(@"Resources\sample_ascii.dat");
         record.GetTimeLine();
         record.GetAnalogPrimaryChannel(0);
         record.GetDigitalChannel(0);
@@ -35,15 +34,8 @@ public class RecordReaderTest
         record.GetDigitalChannel(0);
 
         record = new RecordReader(@"Resources\sample_bin.cfg");
-
-        //record=new RecordReader(@"D:\YandexDisk\Oscillogram\Sepam_StopingGenerator_B\1.DAT");
-        //record.GetTimeLine();
-        //record.GetAnalogPrimaryChannel(0);
-        //record.GetDigitalChannel(0);
-
-        //record=new RecordReader(@"D:\YandexDisk\Oscillogram\Undefined_2013_B32\000.DAT");
-        //record.GetTimeLine();
-        //record.GetAnalogPrimaryChannel(0);
-        //record.GetDigitalChannel(0);
+        record.GetTimeLine();
+        record.GetAnalogPrimaryChannel(0);
+        record.GetDigitalChannel(0);
     }
 }

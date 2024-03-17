@@ -3,68 +3,41 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using ComtradeHandler.Core.Utils;
 
-namespace ComtradeHandler.Core;
+namespace ComtradeHandler.Core.Models;
 
-/// <summary>
-///     Working with *.cfg
-/// </summary>
-public class ConfigurationHandler
+public class ComtradeConfiguration
 {
-    private List<AnalogChannelInformation> _analogChannelInformationList = [];
-    private List<DigitalChannelInformation> _digitalChannelInformationList = [];
+    private List<AnalogChannel> _analogChannelInformationList = [];
+    private List<DigitalChannel> _digitalChannelInformationList = [];
     private List<SampleRate> _sampleRates = [];
     public DataFileType DataFileType = DataFileType.Undefined;
-
     internal double TimeMultiplicationFactor = 1.0;
 
-    //For testing
-    public ConfigurationHandler()
+    public ComtradeConfiguration()
     {
     }
 
-    public ConfigurationHandler(string fullPathToFileCFG)
+    public ComtradeConfiguration(string fullPathToFileCFG)
     {
         Parse(File.ReadAllLines(fullPathToFileCFG, Encoding.Default));
     }
 
-    internal ConfigurationHandler(string[] lines)
+    internal ComtradeConfiguration(string[] lines)
     {
         Parse(lines);
     }
 
-    /// <summary>
-    ///     According STD for COMTRADE
-    /// </summary>
     public string StationName { get; private set; } = string.Empty;
-
-    /// <summary>
-    ///     According STD for COMTRADE
-    /// </summary>
     public string DeviceId { get; private set; } = string.Empty;
-
     public ComtradeVersion Version { get; private set; } = ComtradeVersion.V1991;
-
-    //second line
     public int AnalogChannelsCount { get; private set; }
     public int DigitalChannelsCount { get; private set; }
-
     public IReadOnlyList<SampleRate> SampleRates => _sampleRates;
-    /// <summary>
-    ///     List of analog channel information
-    /// </summary>
-    public IReadOnlyList<AnalogChannelInformation> AnalogChannelInformationList => _analogChannelInformationList;
-
-    /// <summary>
-    ///     List of digital channel information
-    /// </summary>
-    public IReadOnlyList<DigitalChannelInformation> DigitalChannelInformationList => _digitalChannelInformationList;
-
-    /// <summary>
-    ///     According STD for COMTRADE
-    /// </summary>
+    public IReadOnlyList<AnalogChannel> AnalogChannelInformationList => _analogChannelInformationList;
+    public IReadOnlyList<DigitalChannel> DigitalChannelInformationList => _digitalChannelInformationList;
     public double Frequency { get; set; } = 50.0;
-
     public int SamplingRateCount { get; set; }
 
     /// <summary>
@@ -85,16 +58,16 @@ public class ConfigurationHandler
         ParseFirstLine(strings[0]);
         ParseSecondLine(strings[1]);
 
-        _analogChannelInformationList = new List<AnalogChannelInformation>();
+        _analogChannelInformationList = new List<AnalogChannel>();
 
         for (var i = 0; i < AnalogChannelsCount; i++) {
-            _analogChannelInformationList.Add(new AnalogChannelInformation(strings[2 + i]));
+            _analogChannelInformationList.Add(new AnalogChannel(strings[2 + i]));
         }
 
-        _digitalChannelInformationList = new List<DigitalChannelInformation>();
+        _digitalChannelInformationList = new List<DigitalChannel>();
 
         for (var i = 0; i < DigitalChannelsCount; i++) {
-            _digitalChannelInformationList.Add(new DigitalChannelInformation(strings[2 + i + AnalogChannelsCount]));
+            _digitalChannelInformationList.Add(new DigitalChannel(strings[2 + i + AnalogChannelsCount]));
         }
 
         var strIndex = 2 + AnalogChannelsCount + DigitalChannelsCount;
@@ -106,7 +79,6 @@ public class ConfigurationHandler
 
         if (SamplingRateCount == 0) {
             _sampleRates.Add(new SampleRate(strings[strIndex++]));
-            //strIndex++;
         }
         else {
             for (var i = 0; i < SamplingRateCount; i++) {
@@ -170,7 +142,7 @@ public class ConfigurationHandler
         }
 
         var strings = str.Split('.');
-        str = strings[0] + '.' + strings[1].Substring(0, 7);
+        str = strings[0] + '.' + strings[1].Substring(0, Math.Min(7, strings[1].Length));
 
         DateTime.TryParseExact(str, GlobalSettings.DateTimeFormatForParseNanoSecond,
                                CultureInfo.InvariantCulture,

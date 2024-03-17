@@ -4,25 +4,22 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using ComtradeHandler.Core.Models;
+using ComtradeHandler.Core.Utils;
 
-namespace ComtradeHandler.Core;
+namespace ComtradeHandler.Core.Handlers;
 
 /// <summary>
 ///     For creating COMTRADE files
 /// </summary>
 public class RecordWriter
 {
-    private readonly List<AnalogChannelInformation> _analogChannels = [];
-
+    private readonly List<AnalogChannel> _analogChannels = [];
     private readonly string _deviceId = string.Empty;
-    private readonly List<DigitalChannelInformation> _digitalChannels = [];
-    /// <summary>
-    ///     Hz
-    /// </summary>
+    private readonly List<DigitalChannel> _digitalChannels = [];
     private readonly double _frequency = 50;
     private readonly List<SampleRate> _sampleRates = [];
     private readonly List<DataFileSample> _samples = [];
-
     private readonly string _stationName = string.Empty;
 
     /// <summary>
@@ -62,7 +59,7 @@ public class RecordWriter
 
     /// <summary>
     /// </summary>
-    public void AddAnalogChannel(AnalogChannelInformation analogChannel)
+    public void AddAnalogChannel(AnalogChannel analogChannel)
     {
         analogChannel.Index = _analogChannels.Count + 1;
         _analogChannels.Add(analogChannel);
@@ -70,7 +67,7 @@ public class RecordWriter
 
     /// <summary>
     /// </summary>
-    public void AddDigitalChannel(DigitalChannelInformation digitalChannel)
+    public void AddDigitalChannel(DigitalChannel digitalChannel)
     {
         digitalChannel.Index = _digitalChannels.Count + 1;
         _digitalChannels.Add(digitalChannel);
@@ -230,7 +227,7 @@ public class RecordWriter
             }
             else {
                 //binary
-                var byteInOneSample = DataFileHandler.GetByteCountInOneSample(_analogChannels.Count, _digitalChannels.Count, dataFileType);
+                var byteInOneSample = ComtradeData.GetByteCountInOneSample(_analogChannels.Count, _digitalChannels.Count, dataFileType);
                 strings.Add($"--- file type: DAT BINARY: {byteInOneSample * _samples.Count} ---");
 
                 foreach (var str in strings) {

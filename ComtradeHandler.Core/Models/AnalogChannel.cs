@@ -1,47 +1,37 @@
 ﻿using System;
 using System.Globalization;
 
-namespace ComtradeHandler.Core;
+namespace ComtradeHandler.Core.Models;
 
-/// <summary>
-///     Description of AnalogChannelInformation.
-/// </summary>
-public class AnalogChannelInformation
+public class AnalogChannel
 {
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'PS'
     ///     Indicates whether the converted data is in primary (P) or secondary (S) values
     /// </summary>
     public readonly bool IsPrimary = true;
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'primary'
     ///     Channel voltage or current transformer ratio primary factor
     /// </summary>
     public readonly double Primary = 1.0;
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'secondary'
     ///     Channel voltage or current transformer ratio secondary factor
     /// </summary>
     public readonly double Secondary = 1.0;
 
-    /// <summary>
-    ///     Constructor
-    /// </summary>
-    public AnalogChannelInformation(string name, string phase)
+    public AnalogChannel(string name, string phase)
     {
         Name = name;
         Phase = phase;
     }
 
-    public AnalogChannelInformation(string analogLine)
+    public AnalogChannel(string analogLine)
     {
         //TODO: Check if line length == 13;
-
         var values = analogLine.Split(GlobalSettings.Comma);
 
         Index = Convert.ToInt32(values[0].Trim(), CultureInfo.InvariantCulture);
@@ -58,74 +48,67 @@ public class AnalogChannelInformation
         Secondary = Convert.ToDouble(values[11].Trim(), CultureInfo.InvariantCulture);
 
         var isPrimaryText = values[12].Trim();
-        if (isPrimaryText.ToLower().Equals("s")) IsPrimary = false;
+
+        if (isPrimaryText.ToLower().Equals("s")) {
+            IsPrimary = false;
+        }
     }
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'An'
     ///     Analog channel index number
     /// </summary>
     public int Index { get; internal set; }
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'ch_id'
     ///     Channel identifier
     /// </summary>
     public string Name { get; }
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'ph'
     ///     Channel phase identification
     /// </summary>
     public string Phase { get; }
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'ccbm'
     ///     Circuit component being monitored
     /// </summary>
     public string CircuitComponent { get; }
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'uu'
     ///     Channel units (when data has been converted using channel conversion factor)
     /// </summary>
     public string Units { get; } = "NONE";
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'a'
     ///     Channel multiplier (channel conversion factor)
     /// </summary>
     public double MultiplierA { get; set; } = 1.0;
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'b'
     ///     Channel offset adder (channel conversion factor)
     /// </summary>
     public double MultiplierB { get; set; }
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'skew'
     ///     Channel time skew (in microseconds) from the start of sample period.
     /// </summary>
     public double Skew { get; }
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'min'
     ///     Channel minimum data range value
     /// </summary>
     public double Min { get; internal set; } = float.MinValue;
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'max'
     ///     Channel maximum data range value
     /// </summary>

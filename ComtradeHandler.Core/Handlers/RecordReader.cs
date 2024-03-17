@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using ComtradeHandler.Core.Models;
 
-namespace ComtradeHandler.Core;
+namespace ComtradeHandler.Core.Handlers;
 
 public class RecordReader
 {
-    internal RecordReader()
-    {
-    }
-
     /// <summary>
     ///     Read record from file
     /// </summary>
@@ -40,9 +37,8 @@ public class RecordReader
     /// <summary>
     ///     Get configuration for loaded record
     /// </summary>
-    public ConfigurationHandler Configuration { get; private set; }
-
-    internal DataFileHandler Data { get; private set; }
+    public ComtradeConfiguration? Configuration { get; private set; }
+    public ComtradeData? Data { get; private set; }
 
     /// <summary>
     ///     Units for GetTimeLine()
@@ -51,7 +47,7 @@ public class RecordReader
     public bool TimeLineNanoSecondResolution
     {
         get {
-            if (Configuration.SamplingRateCount == 0 || Configuration.SampleRates[0].SamplingFrequency == 0) {
+            if (Configuration?.SamplingRateCount == 0 || Configuration?.SampleRates[0].SamplingFrequency == 0) {
                 return Configuration.TimeLineNanoSecondResolution;
             }
 
@@ -95,7 +91,7 @@ public class RecordReader
         var cfgSection = Encoding.UTF8.GetString(loadedAsListByteFile.ToArray())
                                  .Split(new[] {GlobalSettings.NewLine, "\n"}, StringSplitOptions.None);
 
-        Configuration = new ConfigurationHandler(cfgSection.ToArray());
+        Configuration = new ComtradeConfiguration(cfgSection.ToArray());
     }
 
     private void OpenFromStreamDat(Stream datStream)
@@ -112,10 +108,10 @@ public class RecordReader
             var datSection = Encoding.UTF8.GetString(loadedAsListByteFile.ToArray())
                                      .Split(new[] {GlobalSettings.NewLine, "\n"}, StringSplitOptions.None);
 
-            Data = new DataFileHandler(datSection.ToArray(), Configuration);
+            Data = new ComtradeData(datSection.ToArray(), Configuration);
         }
         else {
-            Data = new DataFileHandler(loadedAsListByteFile.ToArray(), Configuration);
+            Data = new ComtradeData(loadedAsListByteFile.ToArray(), Configuration);
         }
     }
 
@@ -175,17 +171,17 @@ public class RecordReader
             indexInCff++;
         }
 
-        Configuration = new ConfigurationHandler(cfgSection.ToArray());
+        Configuration = new ComtradeConfiguration(cfgSection.ToArray());
 
         if (Configuration.DataFileType == DataFileType.ASCII) {
             var dataSectionStr = Encoding.UTF8.GetString(loadedAsArrayByte, indexOfDataSection, loadedAsArrayByte.Length - indexOfDataSection)
                                          .Split(new[] {GlobalSettings.NewLine, "\n"}, StringSplitOptions.None);
 
-            Data = new DataFileHandler(dataSectionStr.ToArray(), Configuration);
+            Data = new ComtradeData(dataSectionStr.ToArray(), Configuration);
         }
         else {
             var dataSectionByte = loadedAsArrayByte[indexOfDataSection..];
-            Data = new DataFileHandler(dataSectionByte, Configuration);
+            Data = new ComtradeData(dataSectionByte, Configuration);
         }
     }
 

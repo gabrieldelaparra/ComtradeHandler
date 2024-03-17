@@ -1,4 +1,4 @@
-﻿using ComtradeHandler.Core;
+﻿using ComtradeHandler.Core.Models;
 using Xunit;
 
 namespace ComtradeHandler.UnitTests;

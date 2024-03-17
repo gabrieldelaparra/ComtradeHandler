@@ -1,5 +1,5 @@
 ﻿using System;
-using ComtradeHandler.Core;
+using ComtradeHandler.Core.Handlers;
 using Xunit;
 
 namespace ComtradeHandler.UnitTests;
@@ -15,8 +15,7 @@ public class RecordTest
     [Fact]
     public void TestOpenFile()
     {
-        RecordReader record;
-        record = new RecordReader(@"Resources\sample_ascii.dat");
+        var record = new RecordReader(@"Resources\sample_ascii.dat");
         record.GetTimeLine();
         record.GetAnalogPrimaryChannel(0);
         record.GetDigitalChannel(0);
@@ -32,5 +31,8 @@ public class RecordTest
         record.GetDigitalChannel(0);
 
         record = new RecordReader(@"Resources\sample_bin.cfg");
+        record.GetTimeLine();
+        record.GetAnalogPrimaryChannel(0);
+        record.GetDigitalChannel(0);
     }
 }

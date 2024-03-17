@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using ComtradeHandler.Core.Models;
 
-namespace ComtradeHandler.Core;
+namespace ComtradeHandler.Core.Utils;
 
-/// <summary>
-/// </summary>
 public class DataFileSample
 {
     public DataFileSample(int number, int timestamp, double[] analogValues, bool[] digitalValues)
@@ -28,9 +27,8 @@ public class DataFileSample
         Timestamp = Convert.ToInt32(strings[1]);
 
         for (var i = 0; i < analogCount; i++) {
-            if (strings[i + 2] != string.Empty)
+            if (strings[i + 2] != string.Empty) {
                 //by Standard, can be missing value. In that case by default=0
-            {
                 AnalogValues[i] = Convert.ToDouble(strings[i + 2], CultureInfo.InvariantCulture);
             }
         }
@@ -76,14 +74,12 @@ public class DataFileSample
             digitalByteStart = 8 + 4 * analogCount;
         }
 
-        var digitalByteCount = DataFileHandler.GetDigitalByteCount(digitalCount);
+        var digitalByteCount = ComtradeData.GetDigitalByteCount(digitalCount);
 
         for (var i = 0; i < digitalCount; i++) {
             var digitalByteIterator = i / 8;
 
-            DigitalValues[i] =
-                Convert.ToBoolean((bytes[digitalByteStart + digitalByteIterator] >> (i - digitalByteIterator * 8)) &
-                                  1);
+            DigitalValues[i] = Convert.ToBoolean((bytes[digitalByteStart + digitalByteIterator] >> (i - digitalByteIterator * 8)) & 1);
         }
     }
 
@@ -103,26 +99,22 @@ public class DataFileSample
         var result = string.Empty;
         result += Number.ToString();
 
-        result += GlobalSettings.Comma +
-                  Timestamp.ToString();
+        result += GlobalSettings.Comma + Timestamp.ToString();
 
         foreach (var analog in AnalogValues) {
-            result += GlobalSettings.Comma +
-                      analog.ToString(CultureInfo.InvariantCulture);
+            result += GlobalSettings.Comma + analog.ToString(CultureInfo.InvariantCulture);
         }
 
         foreach (var digital in DigitalValues) {
-            result += GlobalSettings.Comma +
-                      Convert.ToInt32(digital).ToString(CultureInfo.InvariantCulture);
+            result += GlobalSettings.Comma + Convert.ToInt32(digital).ToString(CultureInfo.InvariantCulture);
         }
 
         return result;
     }
 
-    public byte[] ToByteDAT(DataFileType dataFileType, IReadOnlyList<AnalogChannelInformation> analogInformations)
+    public byte[] ToByteDAT(DataFileType dataFileType, IReadOnlyList<AnalogChannel> analogInformations)
     {
-        var result =
-            new byte[DataFileHandler.GetByteCountInOneSample(AnalogValues.Length, DigitalValues.Length, dataFileType)];
+        var result = new byte[ComtradeData.GetByteCountInOneSample(AnalogValues.Length, DigitalValues.Length, dataFileType)];
 
         var analogOneChannelLength = dataFileType == DataFileType.Binary ? 2 : 4;
         var digitalByteStart = 8 + analogOneChannelLength * AnalogValues.Length;
@@ -148,21 +140,19 @@ public class DataFileSample
         return result;
     }
 
-    private void AnalogsToBinaryDAT(byte[] result, IReadOnlyList<AnalogChannelInformation> analogInformations)
+    private void AnalogsToBinaryDAT(byte[] result, IReadOnlyList<AnalogChannel> analogInformations)
     {
         for (var i = 0; i < AnalogValues.Length; i++) {
-            var s = (short) ((AnalogValues[i] - analogInformations[i].MultiplierB) /
-                             analogInformations[i].MultiplierA);
+            var s = (short) ((AnalogValues[i] - analogInformations[i].MultiplierB) / analogInformations[i].MultiplierA);
 
             BitConverter.GetBytes(s).CopyTo(result, 8 + i * 2);
         }
     }
 
-    private void AnalogsToBinary32DAT(byte[] result, IReadOnlyList<AnalogChannelInformation> analogInformations)
+    private void AnalogsToBinary32DAT(byte[] result, IReadOnlyList<AnalogChannel> analogInformations)
     {
         for (var i = 0; i < AnalogValues.Length; i++) {
-            var s =
-                (int) ((AnalogValues[i] - analogInformations[i].MultiplierB) / analogInformations[i].MultiplierA);
+            var s = (int) ((AnalogValues[i] - analogInformations[i].MultiplierB) / analogInformations[i].MultiplierA);
 
             BitConverter.GetBytes(s).CopyTo(result, 8 + i * 4);
         }

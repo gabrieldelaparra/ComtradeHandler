@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using ComtradeHandler.Core;
+using ComtradeHandler.Core.Models;
+using ComtradeHandler.Core.Utils;
 using Xunit;
 
 namespace ComtradeHandler.UnitTests;
@@ -82,13 +84,13 @@ public class DataFileSampleTest
 
         var sample = new DataFileSample("5242885,667,-760,1274,72,61,-140,-502,0,0,0,0,1,1", 6, 6);
 
-        var analogInformations = new List<AnalogChannelInformation>();
-        analogInformations.Add(new AnalogChannelInformation(string.Empty, string.Empty));
-        analogInformations.Add(new AnalogChannelInformation(string.Empty, string.Empty));
-        analogInformations.Add(new AnalogChannelInformation(string.Empty, string.Empty));
-        analogInformations.Add(new AnalogChannelInformation(string.Empty, string.Empty));
-        analogInformations.Add(new AnalogChannelInformation(string.Empty, string.Empty));
-        analogInformations.Add(new AnalogChannelInformation(string.Empty, string.Empty));
+        var analogInformations = new List<AnalogChannel>();
+        analogInformations.Add(new AnalogChannel(string.Empty, string.Empty));
+        analogInformations.Add(new AnalogChannel(string.Empty, string.Empty));
+        analogInformations.Add(new AnalogChannel(string.Empty, string.Empty));
+        analogInformations.Add(new AnalogChannel(string.Empty, string.Empty));
+        analogInformations.Add(new AnalogChannel(string.Empty, string.Empty));
+        analogInformations.Add(new AnalogChannel(string.Empty, string.Empty));
 
         var result = sample.ToByteDAT(DataFileType.Binary, analogInformations);
 

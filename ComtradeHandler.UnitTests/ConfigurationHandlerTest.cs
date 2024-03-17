@@ -1,5 +1,6 @@
 ﻿using System;
 using ComtradeHandler.Core;
+using ComtradeHandler.Core.Models;
 using Xunit;
 
 namespace ComtradeHandler.UnitTests;
@@ -26,7 +27,7 @@ BINARY
 ";
 
         var strings = str.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
-        var configHandler = new ConfigurationHandler();
+        var configHandler = new ComtradeConfiguration();
         configHandler.Parse(strings);
 
         Assert.Equal("MASHUK-W2D-C60-1", configHandler.StationName);

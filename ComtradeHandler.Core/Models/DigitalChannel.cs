@@ -1,23 +1,17 @@
 ﻿using System;
 using System.Globalization;
 
-namespace ComtradeHandler.Core;
+namespace ComtradeHandler.Core.Models;
 
-/// <summary>
-///     Information for digital channel
-/// </summary>
-public class DigitalChannelInformation
+public class DigitalChannel
 {
-    /// <summary>
-    ///     Constructor
-    /// </summary>
-    public DigitalChannelInformation(string name, string phase)
+    public DigitalChannel(string name, string phase)
     {
         Name = name;
         Phase = phase;
     }
 
-    public DigitalChannelInformation(string digitalLine)
+    public DigitalChannel(string digitalLine)
     {
         var values = digitalLine.Split(GlobalSettings.Comma);
 
@@ -26,43 +20,37 @@ public class DigitalChannelInformation
         Phase = values[2].Trim();
         CircuitComponent = values[3].Trim();
 
-        if (values.Length > 4)
+        if (values.Length > 4) {
             //some files not include this part of line
-        {
             NormalState = Convert.ToBoolean(Convert.ToInt32(values[4].Trim(), CultureInfo.InvariantCulture));
         }
     }
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'Dn'
     ///     Status channel index number
     /// </summary>
     public int Index { get; internal set; }
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'ch_id'
     ///     Channel identifier
     /// </summary>
     public string Name { get; }
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'ph'
     ///     Channel phase identification
     /// </summary>
     public string Phase { get; }
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'ccbm'
     ///     Circuit component being monitored
     /// </summary>
     public string CircuitComponent { get; }
 
     /// <summary>
-    ///     According STD for COMTRADE
     ///     Parameter 'y'
     ///     Normal (steady state operation) state of status channel
     /// </summary>
