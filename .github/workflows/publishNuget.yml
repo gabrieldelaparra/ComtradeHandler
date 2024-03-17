@@ -16,15 +16,21 @@ jobs:
         run: |
           dotnet build ./ComtradeHandler.Core -c Release
 
-      - name: Pack Project
-        run: |
-          dotnet pack ./ComtradeHandler.Core -c Release --no-build
-
       - name: Get version
         id: package_version
         uses: KageKirin/get-csproj-version@v0
         with:
           file: ./ComtradeHandler.Core/ComtradeHandler.Core.csproj
+
+      - name: Create Tag
+        uses: rickstaa/action-create-tag@v1.7.2
+        with:
+          tag: v${{ steps.test.package_version.version }}
+
+      - name: Pack Project
+        run: |
+          dotnet pack ./ComtradeHandler.Core -c Release --no-build
+          
       # - name: Publish to Nuget
       #   env:
       #     NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
@@ -39,8 +45,8 @@ jobs:
       - name: Publish for Release
         shell: bash
         run: |
-          tag=$(grep '<Version>' < ./ComtradeHandler.Core/ComtradeHandler.Core.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/')
-          # tag=${{ steps.test.package_version.version }}
+          # tag=$(grep '<Version>' < ./ComtradeHandler.Core/ComtradeHandler.Core.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/')
+          tag=${{ steps.test.package_version.version }}
           # tag=$(git describe --tags --abbrev=0)
           release_name="ComtradeHandler-v$tag"
 
@@ -56,5 +62,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: "ComtradeHandler*"
+          tag: v$tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
