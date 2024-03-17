@@ -24,8 +24,10 @@ jobs:
 
       - name: Create Tag
         uses: rickstaa/action-create-tag@v1.7.2
+        env:
+          VERSION_TAG: $(grep '<Version>' < ./ComtradeHandler.Core/ComtradeHandler.Core.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/')
         with:
-          tag: v${{ (grep '<Version>' < ./ComtradeHandler.Core/ComtradeHandler.Core.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/') }}
+          tag: v${{env.VERSION_TAG}}
 
       - name: Pack Project
         run: |
