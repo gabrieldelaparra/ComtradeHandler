@@ -5,6 +5,8 @@ jobs:
     name: Publish
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkou@v4
+  
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v2
         with:
