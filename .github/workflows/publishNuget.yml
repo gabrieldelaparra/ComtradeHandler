@@ -12,10 +12,10 @@ jobs:
 
       - name: Pack Project
         run: |
-          dotnet pack ./ComtradeHanlder.Core -c Release
+          dotnet pack ./ComtradeHandler.Core -c Release
 
       - name: Publish
         env:
           NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
         run: |
-          dotnet nuget push ./ComtradeHanlder.Core/**/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+          dotnet nuget push ./ComtradeHandler.Core/**/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
