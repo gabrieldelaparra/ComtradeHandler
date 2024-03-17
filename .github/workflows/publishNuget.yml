@@ -39,9 +39,10 @@ jobs:
       - name: Publish for Release
         shell: bash
         run: |
-          tag=${{ steps.test.package_version.version }}
+          tag=$(grep '<Version>' < ./ComtradeHandler.Core/ComtradeHandler.Core.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/')
+          # tag=${{ steps.test.package_version.version }}
           # tag=$(git describe --tags --abbrev=0)
-          release_name="ComtradeHandler-v$tag
+          release_name="ComtradeHandler-v$tag"
 
           # Build everything
           dotnet publish ./ComtradeHandler.Core/ComtradeHandler.Core.csproj -c Release -o "$release_name"
