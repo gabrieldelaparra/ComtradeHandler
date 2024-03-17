@@ -4,18 +4,26 @@ namespace ComtradeHandler.Wpf.App.Core;
 
 public class RelayCommand : ICommand
 {
-    private readonly Predicate<object?>? _canExecute;
-    private readonly Action<object?> _execute;
+    private readonly Predicate<object?>? _targetCanExecuteMethod;
+    private readonly Action<object?>? _targetExecuteMethod;
 
-    public RelayCommand(Action<object?> execute, Predicate<object?>? canExecute = null)
+    public RelayCommand(Action<object?>? executeMethod, Predicate<object?>? canExecuteMethod = null)
     {
-        _execute = execute;
-        _canExecute = canExecute;
+        _targetExecuteMethod = executeMethod;
+        _targetCanExecuteMethod = canExecuteMethod;
     }
 
     bool ICommand.CanExecute(object? parameter)
     {
-        return _canExecute == null || _canExecute.Invoke(parameter);
+        if (_targetCanExecuteMethod != null) {
+            return _targetCanExecuteMethod(parameter);
+        }
+
+        if (_targetExecuteMethod != null) {
+            return true;
+        }
+
+        return false;
     }
 
     public event EventHandler? CanExecuteChanged
@@ -23,9 +31,8 @@ public class RelayCommand : ICommand
         add => CommandManager.RequerySuggested += value;
         remove => CommandManager.RequerySuggested -= value;
     }
-
     void ICommand.Execute(object? parameter)
     {
-        _execute.Invoke(parameter);
+        _targetExecuteMethod?.Invoke(parameter);
     }
 }
