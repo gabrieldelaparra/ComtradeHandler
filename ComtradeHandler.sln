@@ -7,13 +7,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComtradeHandler.Core", "Com
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComtradeHandler.UnitTests", "ComtradeHandler.UnitTests\ComtradeHandler.UnitTests.csproj", "{9B43EFDD-8674-4639-8BE2-D4E872CE6EDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComtradeHandler.Wpf.App", "ComtradeHandler.Wpf.App\ComtradeHandler.Wpf.App.csproj", "{E517321E-3F9E-48AF-AA9E-0B3B94C0F3E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComtradeHandler.Wpf.App", "ComtradeHandler.Wpf.App\ComtradeHandler.Wpf.App.csproj", "{E517321E-3F9E-48AF-AA9E-0B3B94C0F3E2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{16D30B54-AD0E-4DF5-A5C9-7A19247C9718}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		LICENSE = LICENSE
+		.github\workflows\publishNuget.yml = .github\workflows\publishNuget.yml
 		README.md = README.md
 	EndProjectSection
 EndProject
