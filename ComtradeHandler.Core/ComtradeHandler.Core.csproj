@@ -4,25 +4,22 @@
         <TargetFramework>net8.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
-		<BasedOnWispComtradeVersion>0.9.5</BasedOnWispComtradeVersion>
-		<Version>1.0.1</Version>
-        <PackageId>ComtradeHandler</PackageId>
-        <Authors>Gabriel De La Parra</Authors>
-    </PropertyGroup>
-
-    <PropertyGroup>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageTags>IEC 60255-24;IEEE C37.111;Comtrade;Power Systems;Electrical Engineering;Disturbance Records;Oscillography;Fault Recording</PackageTags>
+		<Version>1.0.2</Version>
+        <AssemblyName>ComtradeHandler</AssemblyName>
+        <Title>Comtrade Handler</Title>
+        <Copyright>Copyright 2024</Copyright>
+        <Authors>Gabriel De La Parra</Authors>
+        <PackageId>ComtradeHandler</PackageId>
+        <PackageTags>"IEC 60255-24";"IEEE C37.111";"Comtrade";"Power Systems";"Electrical Engineering";"Disturbance Records";"Oscillography";"Fault Recording"</PackageTags>
         <Description>IEEE C37.111 / IEC 60255-24 Reader and Writer: Comtrade (Common Format for Trancient Data Exchange for Power Systems) handler library. Originally based on https://github.com/Esticonv/Wisp.Comtrade</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReleaseNotes>Supporting .Net8</PackageReleaseNotes>
-        <Copyright>Copyright 2024</Copyright>
         <PackageProjectUrl>https://github.com/gabrieldelaparra/ComtradeHandler</PackageProjectUrl>
-        <Title>Comtrade Handler</Title>
         <RepositoryUrl>https://github.com/gabrieldelaparra/ComtradeHandler</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <AssemblyName>ComtradeHandler</AssemblyName>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+		<BasedOnWispComtradeVersion>0.9.5</BasedOnWispComtradeVersion>
     </PropertyGroup>
 
     <ItemGroup>
