@@ -48,7 +48,7 @@ public class DigitalChannel
     ///     Parameter 'ccbm'
     ///     Circuit component being monitored
     /// </summary>
-    public string CircuitComponent { get; }
+    public string CircuitComponent { get; } = string.Empty;
 
     /// <summary>
     ///     Parameter 'y'

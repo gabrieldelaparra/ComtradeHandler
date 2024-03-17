@@ -76,7 +76,7 @@ public class AnalogChannel
     ///     Parameter 'ccbm'
     ///     Circuit component being monitored
     /// </summary>
-    public string CircuitComponent { get; }
+    public string CircuitComponent { get; } = string.Empty;
 
     /// <summary>
     ///     Parameter 'uu'

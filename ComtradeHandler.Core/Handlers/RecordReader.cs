@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+
 using ComtradeHandler.Core.Models;
 
 namespace ComtradeHandler.Core.Handlers;
@@ -57,8 +58,17 @@ public class RecordReader
 
     private void OpenFile(string fullPathToFile)
     {
+        if (string.IsNullOrWhiteSpace(fullPathToFile))
+            throw new ArgumentException("Filename cannot be empty");
+
         var fileInfo = new FileInfo(fullPathToFile);
-        var path = Path.GetDirectoryName(fileInfo.FullName);
+        if (!fileInfo.Exists)
+            throw new ArgumentException("Filename must exist");
+
+        if(fileInfo.Directory is null)
+            throw new ArgumentException("Filename Directory must exist");
+
+        var path = fileInfo.Directory.FullName;
         var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileInfo.FullName);
         var extension = Path.GetExtension(fullPathToFile).ToLower();
 
@@ -89,13 +99,17 @@ public class RecordReader
         }
 
         var cfgSection = Encoding.UTF8.GetString(loadedAsListByteFile.ToArray())
-                                 .Split(new[] {GlobalSettings.NewLine, "\n"}, StringSplitOptions.None);
+                                 .Split([GlobalSettings.NewLine, "\n"], StringSplitOptions.None);
 
         Configuration = new ComtradeConfiguration(cfgSection.ToArray());
     }
 
     private void OpenFromStreamDat(Stream datStream)
     {
+        //Configuration must be already set for this step.
+        if (Configuration is null)
+            return;
+        
         var buffer = new byte[1024];
         var loadedAsListByteFile = new List<byte>();
         int readBytes;
@@ -106,7 +120,7 @@ public class RecordReader
 
         if (Configuration.DataFileType == DataFileType.ASCII) {
             var datSection = Encoding.UTF8.GetString(loadedAsListByteFile.ToArray())
-                                     .Split(new[] {GlobalSettings.NewLine, "\n"}, StringSplitOptions.None);
+                                     .Split(new[] { GlobalSettings.NewLine, "\n" }, StringSplitOptions.None);
 
             Data = new ComtradeData(datSection.ToArray(), Configuration);
         }
@@ -150,7 +164,7 @@ public class RecordReader
         }
 
         var cffFileStrings = Encoding.UTF8.GetString(loadedAsArrayByte, 0, indexOfDataSection)
-                                     .Split(new[] {GlobalSettings.NewLine, "\n"}, StringSplitOptions.None);
+                                     .Split(new[] { GlobalSettings.NewLine, "\n" }, StringSplitOptions.None);
 
         var indexInCff = 0;
 
@@ -175,7 +189,7 @@ public class RecordReader
 
         if (Configuration.DataFileType == DataFileType.ASCII) {
             var dataSectionStr = Encoding.UTF8.GetString(loadedAsArrayByte, indexOfDataSection, loadedAsArrayByte.Length - indexOfDataSection)
-                                         .Split(new[] {GlobalSettings.NewLine, "\n"}, StringSplitOptions.None);
+                                         .Split(new[] { GlobalSettings.NewLine, "\n" }, StringSplitOptions.None);
 
             Data = new ComtradeData(dataSectionStr.ToArray(), Configuration);
         }
@@ -195,6 +209,9 @@ public class RecordReader
     /// </returns>
     public IReadOnlyList<double> GetTimeLine()
     {
+        if (Data is null || Configuration is null)
+            return Array.Empty<double>();
+
         var list = new double[Data.Samples.Length];
 
         if (Configuration.SamplingRateCount == 0 ||
@@ -229,10 +246,13 @@ public class RecordReader
     /// </summary>
     public IReadOnlyList<double> GetAnalogPrimaryChannel(int channelNumber)
     {
-        double Kt = 1;
+        if (Data is null || Configuration is null)
+            return Array.Empty<double>();
+
+        double kt = 1;
 
         if (Configuration.AnalogChannelInformationList[channelNumber].IsPrimary == false) {
-            Kt = Configuration.AnalogChannelInformationList[channelNumber].Primary /
+            kt = Configuration.AnalogChannelInformationList[channelNumber].Primary /
                  Configuration.AnalogChannelInformationList[channelNumber].Secondary;
         }
 
@@ -240,7 +260,7 @@ public class RecordReader
 
         for (var i = 0; i < Data.Samples.Length; i++) {
             list[i] = (Data.Samples[i].AnalogValues[channelNumber] * Configuration.AnalogChannelInformationList[channelNumber].MultiplierA +
-                       Configuration.AnalogChannelInformationList[channelNumber].MultiplierB) * Kt;
+                       Configuration.AnalogChannelInformationList[channelNumber].MultiplierB) * kt;
         }
 
         return list;
@@ -251,6 +271,9 @@ public class RecordReader
     /// </summary>
     public IReadOnlyList<bool> GetDigitalChannel(int channelNumber)
     {
+        if (Data is null || Configuration is null)
+            return Array.Empty<bool>();
+
         var list = new bool[Data.Samples.Length];
 
         for (var i = 0; i < Data.Samples.Length; i++) {

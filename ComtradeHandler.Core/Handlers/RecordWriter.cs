@@ -7,6 +7,8 @@ using System.Text;
 using ComtradeHandler.Core.Models;
 using ComtradeHandler.Core.Utils;
 
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 namespace ComtradeHandler.Core.Handlers;
 
 /// <summary>
@@ -34,6 +36,9 @@ public class RecordWriter
     /// </summary>
     public RecordWriter(RecordReader reader)
     {
+        if (reader.Data is null || reader.Configuration is null)
+            return;
+
         _stationName = reader.Configuration.StationName;
         _deviceId = reader.Configuration.DeviceId;
         _frequency = reader.Configuration.Frequency;
