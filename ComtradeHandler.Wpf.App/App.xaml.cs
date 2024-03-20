@@ -65,6 +65,8 @@ public partial class App : Application
         });
 
         //ViewModels & Services Registration:
+        services.AddSingleton<MainViewModel>();
+        services.AddSingleton<ComtradeViewModel>();
         //Navigation
         services.AddGenericFactory<INavigationService, NavigationService>();
 

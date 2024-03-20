@@ -7,7 +7,14 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
         <Version>0.1.0</Version>
+        <InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);Microsoft.Extensions.Configuration.Binder.SourceGeneration</InterceptorsPreviewNamespaces>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="Resources\Comtrade1.cfg" />
+      <None Remove="Resources\Comtrade1.dat" />
+      <None Remove="Resources\Comtrade1.hdr" />
+    </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\ComtradeHandler.Core\ComtradeHandler.Core.csproj" />
@@ -19,6 +26,7 @@
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
         <PackageReference Include="ProductivityTools.DescriptionValue" Version="1.1.0" />
+        <PackageReference Include="ScottPlot.WPF" Version="5.0.22" />
         <PackageReference Include="Serilog" Version="3.1.1" />
         <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
         <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
@@ -29,6 +37,15 @@
     <ItemGroup>
         <Content Include="appsettings.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Resources\Comtrade1.cfg">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Resources\Comtrade1.dat">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Resources\Comtrade1.hdr">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
 
