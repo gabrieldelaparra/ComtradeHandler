@@ -14,13 +14,13 @@
         <ListView ItemsSource="{Binding WpfPlots}">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Columns="1" />
+                    <UniformGrid Columns="1" MouseWheel="UIElement_OnMouseWheel" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ContentControl
-                        MinHeight="100"
+                        MinHeight="200"
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
                         Content="{Binding}" />
@@ -34,41 +34,6 @@
             </ListView.ItemContainerStyle>
         </ListView>
 
-        <!--<ListBox ItemsSource="{Binding WpfPlots}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <UniformGrid Height="10" Columns="1">
-                        <ContentControl Content="{Binding}" />
-        -->
-        <!--<CheckBox Content="Check this checkbox!" />
-                        <TextBlock Text="{Binding}" />-->
-        <!--
-                    </UniformGrid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>-->
-
-        <!--<UniformGrid Columns="1">
-            <Border
-                Margin="1"
-                BorderBrush="Black"
-                BorderThickness="0.5">
-                <ContentControl Content="{Binding WpfPlots[1]}" />
-            </Border>
-            <Border
-                Margin="1"
-                BorderBrush="Black"
-                BorderThickness="0.5">
-                <ContentControl Content="{Binding WpfPlots[2]}" />
-            </Border>
-        </UniformGrid>-->
-        <!--<ListBox DataContext="{Binding WpfPlots}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <ContentControl Content="{Binding}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ListBox>-->
     </Grid>
 
 

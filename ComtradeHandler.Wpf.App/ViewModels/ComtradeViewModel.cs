@@ -26,12 +26,11 @@ public class ComtradeViewModel : ViewModelBase
         ComtradeConfiguration = reader.Configuration;
         ComtradeData = reader.Data;
 
-        for (int i = 0; i < 8; i++) {
-            //for (int i = 0; i < reader.Configuration.AnalogChannelsCount; i++) {
+        for (int i = 0; i < reader.Configuration.AnalogChannelsCount; i++) {
             var wpfPlot = new WpfPlot();
             var signal = reader.GetAnalogPrimaryChannel(i).ToArray();
             wpfPlot.Plot.Add.Signal(signal);
-            wpfPlot.Plot.Layout.Fixed(new PixelPadding(40, 0, 30, 10));
+            wpfPlot.Plot.Layout.Fixed(new PixelPadding(60, 10, 30, 10));
 
             var min = signal.Min();
             var max = signal.Max();
@@ -40,10 +39,10 @@ public class ComtradeViewModel : ViewModelBase
 
             var minX = 0 - hGap;
             var maxX = signal.Length + hGap;
-            var gMin = Math.Max(Math.Abs(min*d), hGap);
-            var gMax = Math.Max(Math.Abs(max*d), hGap);
-            var minY = min - (min >= 0 ? -gMin : +gMin);
-            var maxY = max + (max >= 0 ? gMax : -gMax);
+            var gMin = Math.Max(Math.Abs(min * d), hGap);
+            var gMax = Math.Max(Math.Abs(max * d), hGap);
+            var minY = min - gMin;
+            var maxY = max + gMax;
 
             ScottPlot.AxisRules.MaximumBoundary maximumBoundary = new(
                 xAxis: wpfPlot.Plot.Axes.Bottom,
@@ -62,15 +61,6 @@ public class ComtradeViewModel : ViewModelBase
             WpfPlots.Add(wpfPlot);
         }
 
-        //ComtradeConfiguration.
-
-        //WpfPlot.Plot.Add.Signal(reader.GetAnalogPrimaryChannel(1).ToArray());
-        //WpfPlot.Plot.Add.Signal(reader.GetAnalogPrimaryChannel(2).ToArray());
-        //WpfPlot.Plot.Add.Signal(reader.GetAnalogPrimaryChannel(3).ToArray());
-        //WpfPlot.Plot.Add.Signal(reader.GetAnalogPrimaryChannel(4).ToArray());
-        //WpfPlot.Plot.Add.Signal(reader.GetAnalogPrimaryChannel(5).ToArray());
-
-        //WpfPlot.Plot.Add.Scatter(dataX, dataY);
     }
 
     private void ApplyLayoutToOtherPlot(object? sender, RenderDetails render)
@@ -91,12 +81,6 @@ public class ComtradeViewModel : ViewModelBase
             if (axesBefore != axesAfter) {
                 dest.Refresh();
             }
-
-            //// disable events briefly to avoid an infinite loop
-            //fp.Configuration.AxesChangedEventEnabled = false;
-            //fp.Plot.SetAxisLimits(newAxisLimits);
-            //fp.Render();
-            //fp.Configuration.AxesChangedEventEnabled = true;
         }
     }
 
