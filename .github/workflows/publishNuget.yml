@@ -19,7 +19,7 @@ jobs:
       - name: Get version
         run: |
           TAG_NAME=$(grep '<Version>' < ./ComtradeHandler.Core/ComtradeHandler.Core.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/') >> $GITHUB_OUTPUT
-          echo "TAG_NAME = $TAG_NAME"
+          echo "echo_TAG_NAME = $TAG_NAME"
         id: version
 
       # - name: Create Tag
@@ -46,17 +46,18 @@ jobs:
         shell: bash
         run: |
           tag=v${{ steps.version.outputs.TAG_NAME }}
-          echo "TAG = $tag"
+          echo "echo_TAG = $tag"
 
           release_name="ComtradeHandler-$tag"
-          echo "RELEASE NAME = $release_name"
+          echo "echo_RELEASE NAME = $release_name"
 
-          dotnet publish ./ComtradeHandler.Core/ComtradeHandler.Core.csproj -c Release -o "$release_name"
-          7z a -tzip "${release_name}.zip" "./${release_name}/*"
+          # dotnet publish ./ComtradeHandler.Core/ComtradeHandler.Core.csproj -c Release -o "$release_name"
+          # 7z a -tzip "${release_name}.zip" "./${release_name}/*"
 
       - name: Publish
         uses: actions/upload-artifact@v4
         with:
-          files: "${release_name}.zip"
+          name: ComtradeHandler.Core.${release_name}
+          path: "${release_name}.zip"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
