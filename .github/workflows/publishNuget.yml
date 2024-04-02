@@ -18,8 +18,8 @@ jobs:
 
       - name: Get version
         run: |
-          echo "TAG_NAME=$(grep '<Version>' < ./ComtradeHandler.Core/ComtradeHandler.Core.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/')" >> $GITHUB_OUTPUT
-          echo $TAG_NAME
+          TAG_NAME=$(grep '<Version>' < ./ComtradeHandler.Core/ComtradeHandler.Core.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/') >> $GITHUB_OUTPUT
+          echo "TAG_NAME = $TAG_NAME"
         id: version
 
       # - name: Create Tag
@@ -46,7 +46,10 @@ jobs:
         shell: bash
         run: |
           tag=v${{ steps.version.outputs.TAG_NAME }}
+          echo "TAG = $tag"
+
           release_name="ComtradeHandler-$tag"
+          echo "RELEASE NAME = $release_name"
 
           dotnet publish ./ComtradeHandler.Core/ComtradeHandler.Core.csproj -c Release -o "$release_name"
           7z a -tzip "${release_name}.zip" "./${release_name}/*"
