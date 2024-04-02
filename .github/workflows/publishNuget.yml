@@ -18,7 +18,7 @@ jobs:
 
       - name: Get version
         run: |
-          TAG_NAME=$(grep '<Version>' < ./ComtradeHandler.Core/ComtradeHandler.Core.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/') >> $GITHUB_OUTPUT
+          echo "TAG_NAME=$(grep '<Version>' < ./ComtradeHandler.Core/ComtradeHandler.Core.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/')" >> "$GITHUB_ENV"
           echo "echo_TAG_NAME = $TAG_NAME"
         id: version
 
@@ -45,7 +45,7 @@ jobs:
       - name: Publish for Release
         shell: bash
         run: |
-          tag=v${{ steps.version.outputs.TAG_NAME }}
+          tag=v$TAG_NAME
           echo "echo_TAG = $tag"
 
           release_name="ComtradeHandler-$tag"
