@@ -22,10 +22,10 @@ jobs:
           echo $TAG_NAME
         id: version
 
-      - name: Create Tag
-        uses: rickstaa/action-create-tag@v1.7.2
-        with:
-          tag: v${{ steps.version.outputs.TAG_NAME }}
+      # - name: Create Tag
+      #   uses: rickstaa/action-create-tag@v1.7.2
+      #   with:
+      #     tag: v${{ steps.version.outputs.TAG_NAME }}
 
       - name: Pack Project
         run: |
@@ -52,7 +52,7 @@ jobs:
           7z a -tzip "${release_name}.zip" "./${release_name}/*"
 
       - name: Publish
-        uses: softprops/action-gh-release@v2
+        uses: actions/upload-artifact@v4
         with:
           files: "${release_name}.zip"
         env:
