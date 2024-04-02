@@ -18,9 +18,9 @@ jobs:
 
       - name: Get version
         run: |
-          TAG_NAME=$(grep '<Version>' < ./ComtradeHandler.Core/ComtradeHandler.Core.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/')
-          echo "TAG_NAME=$TAG_NAME" >> "$GITHUB_ENV"
-          echo "echo_TAG_NAME = $TAG_NAME"
+          tag_name=$(grep '<Version>' < ./ComtradeHandler.Core/ComtradeHandler.Core.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/')
+          echo "TAG_NAME=$tag_name" >> "$GITHUB_ENV"
+          echo "echo_TAG_NAME = $tag_name"
         id: version
 
       # - name: Create Tag
@@ -51,15 +51,19 @@ jobs:
 
           release_name="ComtradeHandler-$tag"
           echo "echo_RELEASE_NAME = $release_name"
-          echo "release_name = $release_name" >> "$GITHUB_ENV"
+          echo "RELEASE_NAME=$release_name" >> "$GITHUB_ENV"
+
+          artifact_name=${release_name}.zip
+          echo "echo_Artifact_Name = $artifact_name"
+          echo "ARTIFACT_NAME=$artifact_name" >> "$GITHUB_ENV"
 
           dotnet publish ./ComtradeHandler.Core/ComtradeHandler.Core.csproj -c Release -o "$release_name"
-          7z a -tzip "${release_name}.zip" "./${release_name}/*"
+          7z a -tzip "$artifact_name" "./${release_name}/*"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "${release_name}.zip"
-          path: "${release_name}.zip"
+          name: $ARTIFACT_NAME
+          path: $ARTIFACT_NAME
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
