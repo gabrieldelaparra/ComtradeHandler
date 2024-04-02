@@ -18,7 +18,8 @@ jobs:
 
       - name: Get version
         run: |
-          echo "TAG_NAME=$(grep '<Version>' < ./ComtradeHandler.Core/ComtradeHandler.Core.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/')" >> "$GITHUB_ENV"
+          TAG_NAME=$(grep '<Version>' < ./ComtradeHandler.Core/ComtradeHandler.Core.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/')
+          echo "TAG_NAME=$TAG_NAME" >> "$GITHUB_ENV"
           echo "echo_TAG_NAME = $TAG_NAME"
         id: version
 
@@ -57,7 +58,7 @@ jobs:
       - name: Publish
         uses: actions/upload-artifact@v4
         with:
-          name: ComtradeHandler.Core.${release_name}
-          path: "${release_name}.zip"
+          name: ComtradeHandler.Core.$release_name
+          path: "$release_name.zip"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
