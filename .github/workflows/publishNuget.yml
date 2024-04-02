@@ -50,16 +50,16 @@ jobs:
           echo "echo_TAG = $tag"
 
           release_name="ComtradeHandler-$tag"
-          echo "echo_RELEASE NAME = $release_name"
+          echo "echo_RELEASE_NAME = $release_name"
           echo "release_name = $release_name" >> "$GITHUB_ENV"
 
           dotnet publish ./ComtradeHandler.Core/ComtradeHandler.Core.csproj -c Release -o "$release_name"
           7z a -tzip "${release_name}.zip" "./${release_name}/*"
 
-      - name: Publish
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ComtradeHandler.Core.$release_name
-          path: "$release_name.zip"
+          name: "${release_name}.zip"
+          path: "${release_name}.zip"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
