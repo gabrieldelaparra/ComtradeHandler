@@ -11,6 +11,7 @@
     Height="450"
     d:DataContext="{d:DesignInstance viewModels:MainViewModel}"
     mc:Ignorable="d">
+
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewModels:ComtradeViewModel}">
             <views:ComtradeViewer />
